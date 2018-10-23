@@ -1,9 +1,12 @@
-Preliminary list of deliverables planned till first checkpoint demo :
+#Preliminary list of deliverables planned till first checkpoint demo :
 
-  -Obtain in depth knowledge about capillary actions and the behaviour of molecules in different interfaces(solid-liquid, liquid-liquid).
-  -Analyze the behaviour of molecules on the tip of water surface.
-  -Convert some of the large number of files provided with data into simpler and smaller formats like JSON for faster access of data.
-  -Aggregate as well as group data in previously created JSON files as desired.
-  -Research about the tools and techniques available for visualization which would fit this data and application nicely.
-  -Discuss with team about the tools and techniques for visualization and finalize them.
-  -Trim unnecessary data and attributes as the data provided is unstructured.
+##GROUP TASKS
+  -Obtain in depth knowledge about capillary actions and the behaviour of molecules in different interfaces(solid-liquid, liquid-liquid). (3 hours)
+  -Analyze the behaviour of molecules on the tip of water surface. (2 hours)
+  -Research about the tools and techniques available for visualization which would fit this data and application nicely. (2 hours)
+  -Discuss with team about the tools and techniques for visualization and finalize them. (2 hour)
+  
+##INDIVIDUAL TASKS
+  -Convert all of the large number of files provided with data into simpler and smaller formats like JSON for faster access of data.(6-7 hours)
+  -Aggregate as well as group data in previously created JSON files as desired. (2-3 hours)
+  -Trim unnecessary data and attributes as the data provided is unstructured. (5-6 hours)
