@@ -1,5 +1,10 @@
 Preliminary list of deliverables planned upto first checkpoint demo :
-- Perfoming a background study to get an understanding of the domain. Performing a research about the capillary actions and how molecules behave in different settings.
-- Research about the various available tools and techniques for visualization. Finalize the tools and techniques that would be applicable for the project.
-- Contribute to the task of converting the large datasets at hand (of tsv files) by aggregating them into simple/smaller data files (potentially json data files).
-- Mapping the layout of the project. Create a roadmap to successfully implement this project.
+
+GROUP TASKS:-
+- Perfoming a background study to get an understanding of the domain. Performing a research about the capillary actions and how molecules behave in different settings. (2-3 hours)
+- Research about the various available tools and techniques for visualization. Finalize the tools and techniques that would be applicable for the project. (1-2 hours)
+- Contribute to the task of converting the large datasets at hand (of tsv files) by aggregating them into simple/smaller data files (potentially json data files). (2-3 hours)
+
+INDIVIDUAL TASKS :-
+- Mapping the layout of the project. Create a roadmap to successfully implement this project. (2-3 hours)
+- Creating an initial UI using the preprocessed and transformed data. (3-5 hours)
