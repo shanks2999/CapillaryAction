@@ -1,7 +1,10 @@
-## Preliminary bullet list of deliverables up to the first chekpoint demo.
+# Preliminary bullet list of deliverables up to the first chekpoint demo.
 
-- Gathering required background knowledge and familarity with domain research about capillary actions and how molecules behave at different  points in time i.e. top vs bottom.
-- As the data provided is in mutiple files containing millions of records, it is a proposed idea potentially convert it into simpler files i.e. JSON for faster access.
-- Discuss among team mates and reach a conclusion about the various tools and techniques that could be applicable to the visulization of the project.
-- Analyse the unstructured data provided to pinpoint important features apart from the superflous ones.
-- Convert the unstructured data to a structuted and meaningful one.
+## GROUP TASKS
+- Gathering required background knowledge and familarity with domain research about capillary actions and how molecules behave at different  points in time i.e. top vs bottom. (4 hours)
+- As the data provided is in mutiple files containing millions of records, it is a proposed idea potentially convert it into simpler files i.e. JSON for faster access. (5 hours)
+- Discuss among team mates and reach a conclusion about the various tools and techniques that could be applicable to the visulization of the project. (2 hours)
+
+## Individual Tasks
+- Analyse the unstructured data provided to pinpoint important features apart from the superflous ones. (2 - 4 hours)
+- Convert the unstructured data to a structuted and meaningful one.(8 - 10 hours)
