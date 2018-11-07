@@ -4,5 +4,7 @@
 
 
 Path to dataset: https://1drv.ms/f/s!Ai5HtuHa525Igpc2M0w2G4-cAfmjWA
- - This path contains the Original dataset and a Python app which converts the OG dataset to a JSON file.
- - Instructions provided in the ReadMe
+This path contains:
+ - The Original dataset.
+ - Python app which converts the Original dataset to a JSON file (Code is provided in the repo).
+ - A "ReadMe" file containing instructions to use the app.
