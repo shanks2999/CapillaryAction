@@ -6,7 +6,8 @@ d3.json("data/data.json", function(json) {
     // console.log(json[0])
     // console.log(json[0].xPos)
     var count = 0;
-
+    var pass = 0;
+    var running = true;
     console.log(count + "Records processed");
 
 
@@ -53,7 +54,7 @@ d3.json("data/data.json", function(json) {
     pointCloud.name = 'shanksCloud';
     scene.add(pointCloud);
 
-
+    var abc = pointCloud.geometry
 
 
     var myOptions = new THREE.OrbitControls(camera, renderer.domElement);
@@ -62,11 +63,44 @@ d3.json("data/data.json", function(json) {
     // new THREE.ObjectControls(App.scene.getCamera(), App.scene.getRenderer().domElement, App.scene.getScene("shanksGroup"));
 
     // render the scene
-    render();
+    document.addEventListener("keydown", onArrowKeyDown, false);
+    function onArrowKeyDown(event) {
 
+        var keyCode = event.which;
+        if (keyCode == 49) {
+            running = true;
+        }
+        else  if (keyCode == 50) {
+            running = false;
+        }
+
+    };
+    render()
     function render() {
-        requestAnimationFrame( render );
-        renderer.render( scene, camera );
+        if(running == true) {
+            setTimeout(function() {
+                requestAnimationFrame(render);
+
+                // animating/drawing code goes here
+
+
+            }, 1000);
+            renderer.render( scene, camera );
+            pass++;
+            for (var i = 0; i < json.length; i++) {
+                pointCloud.geometry.vertices[i].x = json[i].xPos[pass];
+                pointCloud.geometry.vertices[i].y = json[i].yPos[pass];
+                pointCloud.geometry.vertices[i].z = json[i].zPos[pass];
+
+            }
+            if (pass >= json[0].xPos.length)
+                pass = 0;
+            pointCloud.geometry.verticesNeedUpdate = true;
+        }
+        else {
+            requestAnimationFrame(render);
+            renderer.render( scene, camera );
+        }
     }
 
 })
