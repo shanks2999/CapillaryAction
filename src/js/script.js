@@ -3,10 +3,10 @@
 
 d3.json("data/data.json", function(json) {
     console.log("Reading JSON")
-    // console.log(json[0])
+    console.log(json[12391])
     // console.log(json[0].xPos)
     var count = 0;
-    var pass = 0;
+    var pass = json[0].xPos.length-1;
     var running = true;
     console.log(count + "Records processed");
 
@@ -86,15 +86,15 @@ d3.json("data/data.json", function(json) {
 
             }, 1000);
             renderer.render( scene, camera );
-            pass++;
+            pass--;
             for (var i = 0; i < json.length; i++) {
                 pointCloud.geometry.vertices[i].x = json[i].xPos[pass];
                 pointCloud.geometry.vertices[i].y = json[i].yPos[pass];
                 pointCloud.geometry.vertices[i].z = json[i].zPos[pass];
 
             }
-            if (pass >= json[0].xPos.length)
-                pass = 0;
+            if (pass <= 0)
+                pass = json[0].xPos.length-1;
             pointCloud.geometry.verticesNeedUpdate = true;
         }
         else {
