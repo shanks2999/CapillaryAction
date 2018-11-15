@@ -88,9 +88,11 @@ d3.json("data/data.json", function(json) {
         var keyCode = event.which;
         if (keyCode == 49) {
             running = true;
+			render();
         }
         else  if (keyCode == 50) {
             running = false;
+			render();
         }
 		if (keyCode == 13) {
             running1 = true;
@@ -142,9 +144,10 @@ d3.json("data/data.json", function(json) {
 			pointTrajectory.geometry.verticesNeedUpdate = true;
         }
         else {
-            requestAnimationFrame(render);
-            renderer.render( scene, camera );
-			renderer1.render( scene1, camera1 );
+			
+            //requestAnimationFrame(render);
+            //renderer.render( scene, camera );
+			//renderer1.render( scene1, camera1 );
         }
 	}
 		
