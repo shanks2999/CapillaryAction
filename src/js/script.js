@@ -102,29 +102,52 @@ d3.json("data/data.json", function(json) {
     render();
     function render() {
         console.log("in1");
+		scene1.remove(pointTrajectory);
+		g1 = new THREE.Geometry();
+		vectors1 = [];
+        m1 = new THREE.PointsMaterial({
+        vertexColors: THREE.VertexColors,
+        size: 3
+		});
 		if(running == true) {
             setTimeout(function() {
                 requestAnimationFrame(render);
             }, 1000);
-            renderer.render( scene, camera );
             pass++;
-            for (var i = 0; i < json.length; i++) {
+            pass1++;
+			for (var i = 0; i < json.length; i++) {
                 pointCloud.geometry.vertices[i].x = json[i].xPos[pass];
                 pointCloud.geometry.vertices[i].y = json[i].yPos[pass];
                 pointCloud.geometry.vertices[i].z = json[i].zPos[pass];
             }
+			for (var i = 0; i < pass1; i++) {
+				g1.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
+				vectors1.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
+				g1.vertices[i].x = json[10000].xPos[pass1];
+                g1.vertices[i].y = json[10000].yPos[pass1];
+                g1.vertices[i].z = json[10000].zPos[pass1];
+				g1.colors.push(new THREE.Color("rgb(227,74,51)"));
+            }
+			pointTrajectory = new THREE.Points(g1, m1);
+			pointTrajectory.name = 'pointTrajectory';
+			scene1.add(pointTrajectory);
+			
+			renderer.render( scene, camera );
+			renderer1.render( scene1, camera1 );
             if (pass >= json[0].xPos.length)
                 pass = 0;
+			if (pass1 >= 90)
+                pass1 = 0;
             pointCloud.geometry.verticesNeedUpdate = true;
+			pointTrajectory.geometry.verticesNeedUpdate = true;
         }
         else {
             requestAnimationFrame(render);
             renderer.render( scene, camera );
-			running1 = true;
-			render1();
+			renderer1.render( scene1, camera1 );
         }
-    }
-	
+	}
+		
 	/*var raycaster = new THREE.Raycaster(); 
 	var mouse = new THREE.Vector2();
 	renderer.domElement.addEventListener('click', function(e){
@@ -173,45 +196,4 @@ d3.json("data/data.json", function(json) {
     scene1.add(solidParticlesScene2);
 	
 	renderer1.render( scene1, camera1 );
-	
-    function render1() {
-		console.log("in2");
-		scene1.remove(pointTrajectory);
-		g1 = new THREE.Geometry();
-		vectors1 = [];
-        m1 = new THREE.PointsMaterial({
-        vertexColors: THREE.VertexColors,
-        size: 3
-		});
-		if(running1 == true) {
-			//console.log("time instant:"++"sec.");
-            setTimeout(function() {
-                requestAnimationFrame(render1);
-                // animating/drawing code goes here
-            }, 1000);
-            pass1++;
-            for (var i = 0; i < pass1; i++) {
-				g1.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-				vectors1.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-				g1.vertices[i].x = json[10000].xPos[pass1];
-                g1.vertices[i].y = json[10000].yPos[pass1];
-                g1.vertices[i].z = json[10000].zPos[pass1];
-				g1.colors.push(new THREE.Color("rgb(227,74,51)"));
-            }
-			pointTrajectory = new THREE.Points(g1, m1);
-			pointTrajectory.name = 'pointTrajectory';
-			scene1.add(pointTrajectory);	
-			
-			renderer1.render( scene1, camera1 );
-			if (pass1 >= 90)
-                pass1 = 0;
-			pointTrajectory.geometry.verticesNeedUpdate = true;
-        }
-        else {
-            requestAnimationFrame(render1);
-            renderer1.render( scene1, camera1 );
-			running = true;
-			render();
-        }
-    }
 })
