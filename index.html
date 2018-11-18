@@ -1,35 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset=utf-8>
-    <title>CS594 - Project</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 
     <!-- CSS Source -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <link rel="stylesheet" href="./src/css/tabcss.css"/>
 
     <!-- JS Libraries -->
-    <script   src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="lib/js/three.min.js"></script>
     <script src="lib/js/OrbitControls.js"></script>
-	<script src="lib/js/threex.domevents.js"></script>
+    <script src="lib/js/threex.domevents.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
 
     <!-- JS Source -->
+    <script src="./src/js/tabs.js"></script>
     <script src="./src/js/script.js"></script>
+
 </head>
+
 <body>
-<header>
-<h1 align="center"> Capillary Action</h1>
-</header>
-<div style="height:500px;">
+
+<div class="split left">
     <div id="scene" style="height:487.5px; width:650px; float: left; margin-left:2%"></div>
-	<div id="trajectory_scene" style="float: left; height:487.5px; width:650px; margin-left:1%"></div>
 </div>
-<br><br>
-<!--</div>-->
+
+<div class="split right">
+    <div>
+        <div class="tabs">
+            <ul class="tab-links">
+                <li class="active"><a href="#tab1">Tab 1</a></li>
+                <li><a href="#tab2">Tab 2</a></li>
+                <li><a href="#tab3">Tab 3</a></li>
+                <li><a href="#tab4">Tab 4</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="tab1" class="tab active">
+                    <div id="trajectory_scene" style="float: left; height:487.5px; width:650px; margin-left:1%"></div>
+                </div>
+
+                <div id="tab2" class="tab">
+                    <p>Tab #2 content goes here!</p>
+                </div>
+
+                <div id="tab3" class="tab">
+                    <p>Tab #3 content goes here!</p>
+                </div>
+
+                <div id="tab4" class="tab">
+                    <p>Tab #4 content goes here!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
