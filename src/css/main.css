@@ -2,24 +2,31 @@ body {
     font-family: Arial;
 }
 
+#title{
+    color:#379683;
+    text-align: center;
+    margin-top: 1%;
+    font-size: 200%;
+}
+
 .split {
     height: 100%;
     width: 50%;
     position: fixed;
     z-index: 1;
-    top: 0;
+    top: 10%;
     overflow-x: hidden;
     padding-top: 20px;
 }
 
 .left {
     left: 0;
-    background-color: #974949;
-    color: #f9ecec;
+    background-color: #05386b;
+    color: #d1f4fa;
 }
 
 .right {
     right: 0;
-    background-color: #edfffa;
-    color: #5c8d89;
+    background-color: #5cdb95;
+    color: #005792;
 }

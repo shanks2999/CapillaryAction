@@ -21,15 +21,15 @@
     padding:9px 15px;
     display:inline-block;
     border-radius:3px 3px 0px 0px;
-    background:#7FB5DA;
+    background:#05386b;
     font-size:16px;
     font-weight:600;
-    color:#4c4c4c;
+    color:#edf5e1;
     transition:all linear 0.15s;
 }
 
 .tab-links a:hover {
-    background:#a7cce5;
+    background:#379683;
     text-decoration:none;
 }
 
