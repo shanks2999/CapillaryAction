@@ -17,9 +17,6 @@
     <script src="lib/js/threex.domevents.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
-
-
-
 </head>
 
 <body>
@@ -33,6 +30,10 @@
             <li><a href="#tab2">Pause</a></li>
             <li><a href="#tab3">Reset</a></li>
         </ul>
+	<div class="sliderclass" style="height:40px;margin-bottom:2%">
+		<input type="range" name="weight" id="range_weight" value="5" min="1" max="100" style="width:35%;float:left;margin-top:1.5%;margin-right:1.5%; margin-left:6%" oninput="range_weight_disp.value = range_weight.value"/>
+		<output  id="range_weight_disp" style="width:10%;height:30px;font-size:20px;margin-left:1.5%;color:white"><font color="white"></font></output>
+	</div>
     <div id="scene" style="height:487.5px; width:650px; float: left; margin-left:2%"></div>
 </div>
 
