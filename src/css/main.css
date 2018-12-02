@@ -21,12 +21,12 @@ body {
 
 .left {
     left: 0;
-    background-color: #05386b;
+    background-color: #000000;
     color: #d1f4fa;
 }
 
 .right {
     right: 0;
-    background-color: #5cdb95;
+    background-color: #000000;
     color: #005792;
 }

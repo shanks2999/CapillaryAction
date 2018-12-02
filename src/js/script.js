@@ -11,7 +11,7 @@ var width = 650
 var height = width * 0.75;
 var mouse, raycaster;
 var scene, camera, light, renderer, pointCloud;
-
+var sceneV, cameraV, lightV, rendererV;
 var sceneT, cameraT, lightT, rendererT, pointTrajectory;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
@@ -23,6 +23,7 @@ createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
 createRectangle();
+createVelocityProfile();
 
 document.addEventListener("keydown", onArrowKeyDown, false);
 window.addEventListener( 'mousedown', onMouseDown, false );
@@ -86,6 +87,27 @@ function createTrajectoryScene() {
     var myOptionsT = new THREE.OrbitControls(cameraT, rendererT.domElement);
     myOptionsT.enablePan = false;
     myOptionsT.update();
+}
+
+function createVelocityProfile() {
+    sceneV = new THREE.Scene();
+    cameraV = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+    cameraV.position.set(30,175,150);
+    cameraV.lookAt(-10,-20,0);
+
+    lightV = new THREE.DirectionalLight( 0xffffff, 1.5);
+    lightV.position.set(0,2,20);
+    lightV.lookAt(0,0,0);
+    cameraV.add(lightV);
+    sceneV.add(cameraV);
+
+    rendererV = new THREE.WebGLRenderer();
+
+    rendererV.setSize( width, height );
+    document.getElementById("velocity_profile").appendChild( rendererV.domElement );
+
+    var myOptionsV = new THREE.OrbitControls(cameraV, rendererV.domElement);
+    myOptionsV.update();
 }
 
 
