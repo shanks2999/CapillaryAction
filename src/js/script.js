@@ -116,7 +116,7 @@ function createSolidCloud() {
     for(var i=0;i<json.length;i++) {
         if(json[i].label[0] == 3) {
             g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-            g.colors.push(new THREE.Color("rgb(189,189,189)"))
+            g.colors.push(new THREE.Color("rgb(255,255,255)"))
         }
     }
     var m = new THREE.PointsMaterial( { size: 7, sizeAttenuation: false, map: sprite,
@@ -151,41 +151,42 @@ function createLiquidCloud() {
 function createTrajectory(){
     renderT();
     function renderT() {
-        // // sceneT.remove(pointTrajectory);
-        // var gT = new THREE.Geometry();
-        // var vectorsT = [];
-        // var mT = new THREE.PointsMaterial({
-        // vertexColors: THREE.VertexColors,
-        // size: 3
-        // });
-        // if(running == true) {
-        //     setTimeout(function() {
-        //         requestAnimationFrame(renderT);
-        //     }, 1000);
-        //     passT++;
-        //     for (var i = 0; i < passT; i++) {
-        //     	gT.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-        //     	vectorsT.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-        //     	gT.vertices[i].x = json[10000].xPos[passT];
-        //         gT.vertices[i].y = json[10000].yPos[passT];
-        //         gT.vertices[i].z = json[10000].zPos[passT];
-        //     	gT.colors.push(new THREE.Color("rgb(227,74,51)"));
-        //     }
-        //     pointTrajectory = new THREE.Points(gT, mT);
-        //     pointTrajectory.name = 'pointTrajectory';
-        //     sceneT.add(pointTrajectory);
-        //
-        //     rendererT.render( sceneT, cameraT );
-        //     if (passT >= 90)
-        //         passT = 0;
-        //     pointCloud.geometry.verticesNeedUpdate = true;
-        //     // pointTrajectory.geometry.verticesNeedUpdate = true;
-        // }
-        // else {
+        if(sceneT.getObjectByName('pointTrajectory')) {
+            var selectedObject = sceneT.getObjectByName('pointTrajectory');
+            sceneT.remove(selectedObject);
+        }
+        // sceneT.remove(pointTrajectory);
+        var gT = new THREE.Geometry();
+        var vectorsT = [];
+        var mT = new THREE.PointsMaterial( { size: 20, sizeAttenuation: false, map: sprite,
+            alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+        if(running == true) {
+            setTimeout(function() {
+                requestAnimationFrame(renderT);
+            }, 1000);
+            passT++;
+            for (var i = 0; i < passT; i++) {
+            	gT.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
+            	vectorsT.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
+            	gT.vertices[i].x = json[10000].xPos[passT];
+            gT.vertices[i].y = json[10000].yPos[passT];
+            gT.vertices[i].z = json[10000].zPos[passT];
+            	gT.colors.push(new THREE.Color("rgb(227,74,51)"));
+            }
+            pointTrajectory = new THREE.Points(gT, mT);
+            pointTrajectory.name = 'pointTrajectory';
+            sceneT.add(pointTrajectory);
 
+            rendererT.render( sceneT, cameraT );
+            if (passT >= 90)
+                passT = 0;
+            pointCloud.geometry.verticesNeedUpdate = true;
+            // pointTrajectory.geometry.verticesNeedUpdate = true;
+        }
+        else {
             requestAnimationFrame(renderT);
             rendererT.render( sceneT, cameraT );
-        // }
+        }
     }
 
 }
