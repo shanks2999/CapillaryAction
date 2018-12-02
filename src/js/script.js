@@ -15,7 +15,7 @@ var sceneV, cameraV, lightV, rendererV;
 var sceneT, cameraT, lightT, rendererT, pointTrajectory;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
-var cuboid, cubeWidth=3, cubeHeight=200, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
+var cuboid, cubeWidth=1, cubeHeight=200, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
 
 readJSON();
 createInitialScene();
@@ -49,9 +49,12 @@ function createInitialScene() {
     mouse = new THREE.Vector2();
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-    camera.position.set(30,300,150);
-    camera.lookAt(-10,-20,0);
+    camera = new THREE.PerspectiveCamera( 90, width / height, 0.1, 3000 );
+    camera.position.set(100,475,750);
+    camera.lookAt(30,150,20);
+	camera.fov *= 1;
+	camera.zoom = 14;
+	camera.updateProjectionMatrix();
 	
     light = new THREE.DirectionalLight( 0xffffff, 1.5);
     light.position.set(0,2,20);
@@ -115,7 +118,7 @@ function createSolidCloud() {
     var g = new THREE.Geometry();
     for(var i=0;i<json.length;i++) {
         if(json[i].label[0] == 3) {
-            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+            g.vertices.push(new THREE.Vector3(json[i].xPos[0]-5.5, json[i].yPos[0]-160, json[i].zPos[0]));
             g.colors.push(new THREE.Color("rgb(255,255,255)"))
         }
     }
@@ -134,7 +137,7 @@ function createLiquidCloud() {
         if(json[i].label[0] != 3){
             // vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
             vectors.push(i);
-            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+            g.vertices.push(new THREE.Vector3(json[i].xPos[0]-5.5, json[i].yPos[0]-160, json[i].zPos[0]));
             g.colors.push(new THREE.Color("rgb(49,130,189)"))
         }
     }
@@ -200,8 +203,8 @@ function render() {
         }, 1000);
         pass++;
     	for (var i = 0; i < vectors.length; i++) {
-            pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass];
-            pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass];
+            pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass]-5.5;
+            pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass]-160;
             pointCloud.geometry.vertices[i].z = json[vectors[i]].zPos[pass];
         }
 
@@ -282,7 +285,7 @@ function createRectangle() {
     var geometry = new THREE.BoxGeometry(cubeWidth,cubeHeight,cubeLength);
     var material = new THREE.MeshBasicMaterial( {color: "#ffcccc"} );
     cuboid = new THREE.Mesh( geometry, material );
-    cuboid.position.y = 100;
+    cuboid.position.y = -40;
     scene.add( cuboid );
 
 };
