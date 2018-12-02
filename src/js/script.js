@@ -6,6 +6,7 @@ var pass = 0;
 var passT = 0;
 var running = true;
 var runningT = false;
+var i=0;
 
 var width = 650
 var height = width * 0.75;
@@ -15,7 +16,8 @@ var sceneV, cameraV, lightV, rendererV;
 var sceneT, cameraT, lightT, rendererT, pointTrajectory;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
-var cuboid, cubeWidth=1, cubeHeight=200, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
+var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
+var planePoints=[];
 
 readJSON();
 createInitialScene();
@@ -39,7 +41,7 @@ function readJSON() {
         }
     });
     console.log("Done!!")
-    console.log(json[0])
+    console.log(json[1]['xPos'][0])
 }
 
 
@@ -252,12 +254,14 @@ function onArrowKeyDown(event) {
     }
     else  if (keyCode == 50) {
         running = false;
+        console.log(pass);
         render();
     }
     if (keyCode == 13) {
         runningT = true;
     }
     else  if (keyCode == 13) {
+        console.log(pass);
         runningT = false;
     }
 
@@ -267,6 +271,18 @@ function onArrowKeyDown(event) {
         xTranslateValue -= 0.1;
         if(-xTranslateValue > 10)
             planeBackMovable = false;
+        for (i = 0; i < json.length; i++)
+        {
+            if(Math.abs(json[i]['xPos'][pass]-xTranslateValue-5.5)<0.09)
+            {
+                planePoints.push(json[i]);
+            }
+
+        }
+        //sidePlot(planePoints);
+        //console.log(cuboid.position.z);
+        console.log(planePoints.length);
+        planePoints=[];
 
     }
     else if (keyCode==83 && planeFrontMovable && !running){
@@ -285,7 +301,7 @@ function createRectangle() {
     var geometry = new THREE.BoxGeometry(cubeWidth,cubeHeight,cubeLength);
     var material = new THREE.MeshBasicMaterial( {color: "#ffcccc"} );
     cuboid = new THREE.Mesh( geometry, material );
-    cuboid.position.y = -40;
+    cuboid.position.y = -8;
     scene.add( cuboid );
 
 };
