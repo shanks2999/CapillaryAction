@@ -261,7 +261,7 @@ function onArrowKeyDown(event) {
         runningT = false;
     }
 
-    if (keyCode==87 && planeBackMovable){
+    if (keyCode==87 && planeBackMovable && !running){
         planeFrontMovable = true;
         cuboid.translateX(-0.1);
         xTranslateValue -= 0.1;
@@ -269,7 +269,7 @@ function onArrowKeyDown(event) {
             planeBackMovable = false;
 
     }
-    else if (keyCode==83 && planeFrontMovable){
+    else if (keyCode==83 && planeFrontMovable && !running){
         planeBackMovable = true;
         cuboid.translateX(0.1);
         xTranslateValue += 0.1;
