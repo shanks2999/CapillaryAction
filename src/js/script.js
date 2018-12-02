@@ -11,18 +11,17 @@ var width = 650
 var height = width * 0.75;
 var mouse, raycaster;
 var scene, camera, light, renderer, pointCloud;
-var sceneT, cameraT, lightT, rendererT, pointTrajectory, pointSolid;
-var cuboid;
-var cubeWidth=3;
-var cubeHeight=200;
-var cubeLength=80;
-var planeBackMovable = true;
-var planeFrontMovable = true;
-var xTranslateValue = 0;
+
+var sceneT, cameraT, lightT, rendererT, pointTrajectory;
+var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
+var vectors = []
+var cuboid, cubeWidth=3, cubeHeight=200, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
+
 readJSON();
 createInitialScene();
 createTrajectoryScene();
-createPointCloud();
+createSolidCloud();
+createLiquidCloud();
 createRectangle();
 
 document.addEventListener("keydown", onArrowKeyDown, false);
@@ -58,7 +57,7 @@ function createInitialScene() {
     light.lookAt(0,0,0);
     camera.add(light);
     scene.add(camera);
-	
+
 	renderer = new THREE.WebGLRenderer();
     renderer.setSize( width, height );
     document.getElementById("scene").appendChild( renderer.domElement );
@@ -66,6 +65,8 @@ function createInitialScene() {
     myOptions.enablePan = false;
     myOptions.update();
 }
+
+
 function createTrajectoryScene() {
     sceneT = new THREE.Scene();
     cameraT = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
@@ -79,37 +80,117 @@ function createTrajectoryScene() {
     sceneT.add(cameraT);
 
     rendererT = new THREE.WebGLRenderer();
-
     rendererT.setSize( width, height );
     document.getElementById("trajectory_scene").appendChild( rendererT.domElement );
 
     var myOptionsT = new THREE.OrbitControls(cameraT, rendererT.domElement);
+    myOptionsT.enablePan = false;
     myOptionsT.update();
 }
 
-function createPointCloud() {
-    var vectors = []
-    var m = new THREE.PointsMaterial({
-        vertexColors: THREE.VertexColors,
-        size: 0.2
-    });
 
+function createSolidCloud() {
     var g = new THREE.Geometry();
-    pointCloud = THREE.Points();
-
     for(var i=0;i<json.length;i++) {
-        g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-        vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-        if(json[i].label[0] == 1)
-            g.colors.push(new THREE.Color("rgb(49,130,189)"))
-        if(json[i].label[0] == 3)
+        if(json[i].label[0] == 3) {
+            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
             g.colors.push(new THREE.Color("rgb(189,189,189)"))
-        else
-            g.colors.push(new THREE.Color("rgb(227,74,51)"))
+        }
     }
-    pointCloud = new THREE.Points(g, m);
-    pointCloud.name = 'shanksCloud';
+    var m = new THREE.PointsMaterial( { size: 7, sizeAttenuation: false, map: sprite,
+        alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // var solidCloud = new THREE.Points( g, m );
+    // solidCloud.name = 'solidCloud';
+    scene.add(new THREE.Points( g, m ));
+    sceneT.add(new THREE.Points( g, m ));
+}
+
+
+function createLiquidCloud() {
+    var g = new THREE.Geometry();
+    for(var i=0;i<json.length;i++) {
+        if(json[i].label[0] != 3){
+            // vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+            vectors.push(i);
+            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+            g.colors.push(new THREE.Color("rgb(49,130,189)"))
+        }
+    }
+    // pointCloud = new THREE.Points(g, m);
+    var m = new THREE.PointsMaterial( { size: 7, sizeAttenuation: false, map: sprite,
+        alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // m.color.setHSL( 1.0, 0.3, 0.7 );
+    pointCloud = new THREE.Points( g, m );
+    pointCloud.name = 'liquidCloud';
     scene.add(pointCloud);
+}
+
+
+function createTrajectory(){
+    renderT();
+    function renderT() {
+        // // sceneT.remove(pointTrajectory);
+        // var gT = new THREE.Geometry();
+        // var vectorsT = [];
+        // var mT = new THREE.PointsMaterial({
+        // vertexColors: THREE.VertexColors,
+        // size: 3
+        // });
+        // if(running == true) {
+        //     setTimeout(function() {
+        //         requestAnimationFrame(renderT);
+        //     }, 1000);
+        //     passT++;
+        //     for (var i = 0; i < passT; i++) {
+        //     	gT.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
+        //     	vectorsT.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
+        //     	gT.vertices[i].x = json[10000].xPos[passT];
+        //         gT.vertices[i].y = json[10000].yPos[passT];
+        //         gT.vertices[i].z = json[10000].zPos[passT];
+        //     	gT.colors.push(new THREE.Color("rgb(227,74,51)"));
+        //     }
+        //     pointTrajectory = new THREE.Points(gT, mT);
+        //     pointTrajectory.name = 'pointTrajectory';
+        //     sceneT.add(pointTrajectory);
+        //
+        //     rendererT.render( sceneT, cameraT );
+        //     if (passT >= 90)
+        //         passT = 0;
+        //     pointCloud.geometry.verticesNeedUpdate = true;
+        //     // pointTrajectory.geometry.verticesNeedUpdate = true;
+        // }
+        // else {
+
+            requestAnimationFrame(renderT);
+            rendererT.render( sceneT, cameraT );
+        // }
+    }
+
+}
+
+
+render();
+function render() {
+    if(running == true) {
+        setTimeout(function() {
+            requestAnimationFrame(render);
+        }, 1000);
+        pass++;
+    	for (var i = 0; i < vectors.length; i++) {
+            pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass];
+            pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass];
+            pointCloud.geometry.vertices[i].z = json[vectors[i]].zPos[pass];
+        }
+
+    	renderer.render( scene, camera );
+        if (pass >= json[0].xPos.length)
+            pass = 0;
+        pointCloud.geometry.verticesNeedUpdate = true;
+    }
+    else {
+        requestAnimationFrame(render);
+        renderer.render( scene, camera );
+    }
 }
 
 
@@ -136,132 +217,42 @@ function onMouseDown(e) {
     }
 }
 
-function createTrajectory(){
-    sceneT.remove(pointTrajectory);
-    sceneT.remove(pointSolid);
-    var vectorsT = []
-    var mT = new THREE.PointsMaterial({
-        vertexColors: THREE.VertexColors,
-        size: 0.3
-    });
 
-    var gT = new THREE.Geometry();
-
-    for(var i=0;i<json.length;i++) {
-        if(json[i].label[0] == 3)
-    	{
-    		gT.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-    		vectorsT.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-            gT.colors.push(new THREE.Color("rgb(189,189,189)"));
-    	}
+function onArrowKeyDown(event) {
+    var keyCode = event.which;
+    if (keyCode == 49) {
+        running = true;
+        render();
     }
-    pointSolid = new THREE.Points(gT, mT);
-    pointSolid.name = 'solidParticlesForScene2';
-    sceneT.add(pointSolid);
-
-    rendererT.render( sceneT, cameraT );
-
-
-    renderT();
-    function renderT() {
-        sceneT.remove(pointTrajectory);
-        gT = new THREE.Geometry();
-        vectorsT = [];
-        mT = new THREE.PointsMaterial({
-        vertexColors: THREE.VertexColors,
-        size: 3
-        });
-        if(running == true) {
-            setTimeout(function() {
-                requestAnimationFrame(renderT);
-            }, 1000);
-            passT++;
-            for (var i = 0; i < passT; i++) {
-            	gT.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-            	vectorsT.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-            	gT.vertices[i].x = json[10000].xPos[passT];
-                gT.vertices[i].y = json[10000].yPos[passT];
-                gT.vertices[i].z = json[10000].zPos[passT];
-            	gT.colors.push(new THREE.Color("rgb(227,74,51)"));
-            }
-            pointTrajectory = new THREE.Points(gT, mT);
-            pointTrajectory.name = 'pointTrajectory';
-            sceneT.add(pointTrajectory);
-
-            rendererT.render( sceneT, cameraT );
-            if (passT >= 90)
-                passT = 0;
-            pointCloud.geometry.verticesNeedUpdate = true;
-            // pointTrajectory.geometry.verticesNeedUpdate = true;
-        }
-        else {
-
-            requestAnimationFrame(renderT);
-            rendererT.render( sceneT, cameraT );
-        }
+    else  if (keyCode == 50) {
+        running = false;
+        render();
+    }
+    if (keyCode == 13) {
+        runningT = true;
+    }
+    else  if (keyCode == 13) {
+        runningT = false;
     }
 
-}
+    if (keyCode==87 && planeBackMovable){
+        planeFrontMovable = true;
+        cuboid.translateX(-0.1);
+        xTranslateValue -= 0.1;
+        if(-xTranslateValue > 10)
+            planeBackMovable = false;
 
+    }
+    else if (keyCode==83 && planeFrontMovable){
+        planeBackMovable = true;
+        cuboid.translateX(0.1);
+        xTranslateValue += 0.1;
+        if(xTranslateValue > 18)
+            planeFrontMovable = false;
 
-    function onArrowKeyDown(event) {
-        var keyCode = event.which;
-        if (keyCode == 49) {
-            running = true;
-			render();
-        }
-        else  if (keyCode == 50) {
-            running = false;
-			render();
-        }
-		if (keyCode == 13) {
-            runningT = true;
-        }
-        else  if (keyCode == 13) {
-            runningT = false;
-        }
+    }
+};
 
-        if (keyCode==87 && planeBackMovable){
-            planeFrontMovable = true;
-            cuboid.translateX(-0.1);
-            xTranslateValue -= 0.1;
-            if(-xTranslateValue > 10)
-                planeBackMovable = false;
-
-        }
-        else if (keyCode==83 && planeFrontMovable){
-            planeBackMovable = true;
-            cuboid.translateX(0.1);
-            xTranslateValue += 0.1;
-            if(xTranslateValue > 18)
-                planeFrontMovable = false;
-
-        }
-    };
-    render();
-    function render() {
-		if(running == true) {
-            setTimeout(function() {
-                requestAnimationFrame(render);
-            }, 1000);
-            pass++;
-			for (var i = 0; i < json.length; i++) {
-                pointCloud.geometry.vertices[i].x = json[i].xPos[pass];
-                pointCloud.geometry.vertices[i].y = json[i].yPos[pass];
-                pointCloud.geometry.vertices[i].z = json[i].zPos[pass];
-            }
-			
-			renderer.render( scene, camera );
-            if (pass >= json[0].xPos.length)
-                pass = 0;
-            pointCloud.geometry.verticesNeedUpdate = true;
-        }
-        else {
-			
-            requestAnimationFrame(render);
-            renderer.render( scene, camera );
-        }
-	}
 
 function createRectangle() {
 
@@ -273,7 +264,8 @@ function createRectangle() {
 
 };
 
-		
+
+
 	/*var raycaster = new THREE.Raycaster(); 
 	var mouse = new THREE.Vector2();
 	renderer.domElement.addEventListener('click', function(e){
