@@ -12,11 +12,19 @@ var height = width * 0.75;
 var mouse, raycaster;
 var scene, camera, light, renderer, pointCloud;
 var sceneT, cameraT, lightT, rendererT, pointTrajectory, pointSolid;
-
+var cuboid;
+var cubeWidth=3;
+var cubeHeight=200;
+var cubeLength=80;
+var planeBackMovable = true;
+var planeFrontMovable = true;
+var xTranslateValue = 0;
 readJSON();
 createInitialScene();
 createTrajectoryScene();
 createPointCloud();
+createRectangle();
+
 document.addEventListener("keydown", onArrowKeyDown, false);
 window.addEventListener( 'mousedown', onMouseDown, false );
 
@@ -42,7 +50,7 @@ function createInitialScene() {
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-    camera.position.set(30,175,150);
+    camera.position.set(30,300,150);
     camera.lookAt(-10,-20,0);
 	
     light = new THREE.DirectionalLight( 0xffffff, 1.5);
@@ -212,6 +220,23 @@ function createTrajectory(){
         else  if (keyCode == 13) {
             runningT = false;
         }
+
+        if (keyCode==87 && planeBackMovable){
+            planeFrontMovable = true;
+            cuboid.translateX(-0.1);
+            xTranslateValue -= 0.1;
+            if(-xTranslateValue > 10)
+                planeBackMovable = false;
+
+        }
+        else if (keyCode==83 && planeFrontMovable){
+            planeBackMovable = true;
+            cuboid.translateX(0.1);
+            xTranslateValue += 0.1;
+            if(xTranslateValue > 18)
+                planeFrontMovable = false;
+
+        }
     };
     render();
     function render() {
@@ -237,6 +262,17 @@ function createTrajectory(){
             renderer.render( scene, camera );
         }
 	}
+
+function createRectangle() {
+
+    var geometry = new THREE.BoxGeometry(cubeWidth,cubeHeight,cubeLength);
+    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc"} );
+    cuboid = new THREE.Mesh( geometry, material );
+    cuboid.position.y = 100;
+    scene.add( cuboid );
+
+};
+
 		
 	/*var raycaster = new THREE.Raycaster(); 
 	var mouse = new THREE.Vector2();
