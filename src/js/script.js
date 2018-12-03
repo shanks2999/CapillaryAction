@@ -16,8 +16,8 @@ var sceneV, cameraV, lightV, rendererV;
 var sceneT, cameraT, lightT, rendererT, pointTrajectory;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
-var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
-var verticalCuboid, vCubeWidth=50, vCubeHeight=3, vCubeLength=50, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
+var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=40, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
+var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
 var planePoints=[], vPlanePoints=[];
 
 readJSON();
@@ -275,7 +275,7 @@ function onArrowKeyDown(event) {
             planeBackMovable = false;
         for (i = 0; i < json.length; i++)
         {
-            if(Math.abs(json[i]['xPos'][pass]-xTranslateValue-5.5)<0.09)
+            if(Math.abs(json[i]['xPos'][pass]-xTranslateValue)<0.09 && json[i]['label'][0]!=3)
             {
                 planePoints.push(json[i]);
             }
@@ -295,7 +295,7 @@ function onArrowKeyDown(event) {
             planeFrontMovable = false;
         for (i = 0; i < json.length; i++)
         {
-            if(Math.abs(json[i]['xPos'][pass]-xTranslateValue-5.5)<0.09)
+            if(Math.abs(json[i]['xPos'][pass]-xTranslateValue)<0.09 && json[i]['label'][0]!=3)
             {
                 planePoints.push(json[i]);
             }
@@ -308,15 +308,15 @@ function onArrowKeyDown(event) {
 
     }
 
-    if (keyCode==87 && planeUpMovable && !running){
+    if (keyCode==83 && planeUpMovable && !running){
         planeDownMovable = true;
         verticalCuboid.translateY(-0.1);
         yTranslateValue -= 0.1;
-        if(-yTranslateValue > 10)
+        if(-yTranslateValue > 70)
             planeUpMovable = false;
         for (i = 0; i < json.length; i++)
         {
-            if(Math.abs(json[i]['yPos'][pass]-yTranslateValue-160)<0.09)
+            if(Math.abs(json[i]['yPos'][pass]-yTranslateValue)<0.09 && json[i]['label'][0]!=3)
             {
                 vPlanePoints.push(json[i]);
             }
@@ -328,15 +328,15 @@ function onArrowKeyDown(event) {
         vPlanePoints=[];
 
     }
-    else if (keyCode==83 && planeDownMovable && !running){
+    else if (keyCode==87 && planeDownMovable && !running){
         planeUpMovable = true;
         verticalCuboid.translateY(0.1);
         yTranslateValue += 0.1;
-        if(yTranslateValue > 18)
+        if(yTranslateValue > 100)
             planeDownMovable = false;
         for (i = 0; i < json.length; i++)
         {
-            if(Math.abs(json[i]['yPos'][pass]-yTranslateValue-160)<0.09)
+            if(Math.abs(json[i]['yPos'][pass]-yTranslateValue)<0.09 && json[i]['label'][0]!=3)
             {
                 vPlanePoints.push(json[i]);
             }
