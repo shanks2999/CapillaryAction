@@ -401,7 +401,7 @@ function createPlots() {
 	readHeightData();
 
     var start = 0,
-      end = 2.25,
+      end = 1.8,
       numSpirals = 3,
       margin = {top:50, bottom:50, left:50, right:50};
 
@@ -410,7 +410,7 @@ function createPlots() {
     };
 
     // used to assign nodes color by group
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var color = ['#0a2929', '#1f7a7a', '#47d1d1', '#c2f0f0'];
 
     var r = d3.min([width, height]) / 2 - 40;
 
@@ -421,7 +421,7 @@ function createPlots() {
     var svg = d3.select("body").select("#plots_scene").append("svg")
       .attr("width", width+70)
       .attr("height", height+25)
-	  .style("background", "#ecf7f9")
+	  .style("background", "white")
 	  .style("border-style", "solid")
 	  .style("border-color", "white")
       .append("g")
@@ -442,22 +442,30 @@ function createPlots() {
       .style("stroke", "steelblue");
 
     var spiralLength = path.node().getTotalLength(),
-        N = 365,
-        barWidth = (spiralLength / N) - 1;
+        N = 90,
+        barWidth = (spiralLength / 225) - 1;
     var someData = [];
     for (var i = 0; i < N; i++) {
-      var currentDate = new Date();
-      currentDate.setDate(currentDate.getDate() + i);
+      /*var currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() + i);*/
+	  var v = sdArray[i];
       someData.push({
-        date: currentDate,
-        value: Math.random(),
-        group: currentDate.getMonth()
+        //date: currentDate,
+        timeIndex: i+1,
+		value: sdArray[i],
+        group: (v<0.12)?1:((v<0.28)?2:((v<0.38)?3:4))
       });
     }
 
-    var timeScale = d3.scaleTime()
+    /*var timeScale = d3.scaleTime()
       .domain(d3.extent(someData, function(d){
-        return d.date;
+        return d.timeIndex;
+      }))
+      .range([0, spiralLength]);*/
+	  
+	var timeScale = d3.scaleLinear()
+      .domain(d3.extent(someData, function(d){
+        return d.timeIndex;
       }))
       .range([0, spiralLength]);
     
@@ -474,8 +482,9 @@ function createPlots() {
       .append("rect")
       .attr("x", function(d,i){
         
-        var linePer = timeScale(d.date),
-            posOnLine = path.node().getPointAtLength(linePer),
+        var //linePer = timeScale(d.date),
+            linePer = timeScale(d.timeIndex),
+			posOnLine = path.node().getPointAtLength(linePer),
             angleOnLine = path.node().getPointAtLength(linePer - barWidth);
       
         d.linePer = linePer; // % distance are on the spiral
@@ -495,14 +504,14 @@ function createPlots() {
       .attr("height", function(d){
         return yScale(d.value);
       })
-      .style("fill", function(d){return color(d.group);})
+      .style("fill", function(d){return color[d.group-1];})
       .style("stroke", "none")
       .attr("transform", function(d){
         return "rotate(" + d.a + "," + d.x  + "," + d.y + ")"; // rotate the bar
       });
     
     // add date labels
-    var tF = d3.timeFormat("%b %Y"),
+    /*var tF = d3.timeFormat("%b %Y"),
         firstInMonth = {};
 
     svg.selectAll("text")
@@ -530,23 +539,23 @@ function createPlots() {
       .style("fill", "grey")
       .attr("startOffset", function(d){
         return ((d.linePer / spiralLength) * 100) + "%";
-      })
+      })*/
 
 
-    var tooltip = d3.select("#chart")
+    var tooltip = d3.select("#plots_scene")
     .append('div')
     .attr('class', 'tooltip');
 
     tooltip.append('div')
-    .attr('class', 'date');
+    .attr('class', 'timeIndex');
     tooltip.append('div')
     .attr('class', 'value');
 
     svg.selectAll("rect")
     .on('mouseover', function(d) {
 
-        tooltip.select('.date').html("Date: <b>" + d.date.toDateString() + "</b>");
-        tooltip.select('.value').html("Value: <b>" + Math.round(d.value*100)/100 + "<b>");
+        tooltip.select('.timeIndex').html("Time Instance: <b>" + d.timeIndex + " sec.</b>");
+        tooltip.select('.value').html("Standard Deviation: <b>" + d.value + "<b>");
 
         d3.select(this)
         .style("fill","#FFFFFF")
@@ -563,7 +572,7 @@ function createPlots() {
     })
     .on('mouseout', function(d) {
         d3.selectAll("rect")
-        .style("fill", function(d){return color(d.group);})
+        .style("fill", function(d){return color[d.group-1];})
         .style("stroke", "none")
 
         tooltip.style('display', 'none');
