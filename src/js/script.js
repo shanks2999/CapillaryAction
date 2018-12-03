@@ -7,7 +7,7 @@ var running = true;
 var i=0;
 var heightArray = [];
 var sdArray = [];
-
+var timeout = 1000;
 var width = 650
 var height = width * 0.75;
 var mouse, raycaster;
@@ -49,18 +49,18 @@ function readJSON() {
 
 
 function createInitialScene() {
-    // var min=Number.MAX_SAFE_INTEGER;
-    // var max=-Number.MAX_SAFE_INTEGER
-    // for(var i=0;i<json.length;i++){
-    //     if(json[i].label[0]==3){
-    //         if(json[i].yPos[0] > max)
-    //             max = json[i].yPos[0]
-    //         if(json[i].yPos[0] < min)
-    //             min = json[i].yPos[0]
-    //     }
-    // }
-    // console.log(min)
-    // console.log(max)
+    var min=Number.MAX_SAFE_INTEGER;
+    var max=-Number.MAX_SAFE_INTEGER
+    for(var i=0;i<json.length;i++){
+        if(json[i].label[0]==3){
+            if(json[i].yPos[0] > max)
+                max = json[i].yPos[0]
+            if(json[i].yPos[0] < min)
+                min = json[i].yPos[0]
+        }
+    }
+    console.log("Minimum recorded", min)
+    console.log("Maximum recorded", max)
 
     raycaster = new THREE.Raycaster();
     raycaster.params.Points.threshold = 10;
@@ -140,7 +140,7 @@ function createSolidCloud() {
             g.colors.push(new THREE.Color("rgb(255,255,255)"))
         }
     }
-    var m = new THREE.PointsMaterial( { size: 7, sizeAttenuation: false, map: sprite,
+    var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
         alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
     // var solidCloud = new THREE.Points( g, m );
     // solidCloud.name = 'solidCloud';
@@ -160,7 +160,7 @@ function createLiquidCloud() {
         }
     }
     // pointCloud = new THREE.Points(g, m);
-    var m = new THREE.PointsMaterial( { size: 7, sizeAttenuation: false, map: sprite,
+    var m = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, map: sprite,
         alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
     // m.color.setHSL( 1.0, 0.3, 0.7 );
     pointCloud = new THREE.Points( g, m );
@@ -178,7 +178,7 @@ function render() {
     if(running == true) {
         setTimeout(function() {
             requestAnimationFrame(render);
-        }, 1000);
+        }, timeout);
 
         for (var i = 0; i < vectors.length; i++) {
             pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass];
@@ -227,10 +227,11 @@ function onMouseDown(e) {
             var selectedObject = sceneT.getObjectByName('pointTrajectory');
             sceneT.remove(selectedObject);
         }
+
         var gT = new THREE.Geometry();
         var mT = new THREE.PointsMaterial( { size: 20, sizeAttenuation: false, map: sprite,
             alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
-        gT.vertices.push(new THREE.Vector3(json[vectors[0]].xPos[0], json[vectors[0]].yPos[0], json[vectors[0]].zPos[0]));
+        gT.vertices.push(new THREE.Vector3(json[vectors[0]].xPos[particle.index], json[vectors[particle.index]].yPos[0], json[vectors[particle.index]].zPos[0]));
         gT.colors.push(new THREE.Color("rgb(227,74,51)"));
         pointTrajectory = new THREE.Points(gT, mT);
         pointTrajectory.name = 'pointTrajectory';
@@ -247,12 +248,15 @@ function onArrowKeyDown(event) {
     var keyCode = event.which;
     if (keyCode == 49) {
         running = true;
-        render();
     }
     else  if (keyCode == 50) {
         running = false;
-        console.log(pass);
-        render();
+    }
+    if (keyCode == 38) {
+        timeout -= 50;
+    }
+    if (keyCode == 40) {
+        timeout += 50;
     }
 
     if (keyCode==65 && planeBackMovable && !running){
