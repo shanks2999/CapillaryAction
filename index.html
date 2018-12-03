@@ -20,55 +20,56 @@
 </head>
 
 <body>
-<div id="title">
-    Capillary Action
-</div>
-<div class="split left">
-    <div class="tabs">
-        <ul class="tab-links">
-            <li class="active"><a href="#tab1">Play</a></li>
-            <li><a href="#tab2">Pause</a></li>
-            <li><a href="#tab3">Reset</a></li>
-        </ul>
-	<div class="sliderclass" style="height:40px;margin-bottom:2%">
-		<input type="range" name="weight" id="range_weight" value="5" min="1" max="100" style="width:35%;float:left;margin-top:1.5%;margin-right:1.5%; margin-left:6%" oninput="range_weight_disp.value = range_weight.value"/>
-		<output  id="range_weight_disp" style="width:10%;height:30px;font-size:20px;margin-left:1.5%;color:white"><font color="white"></font></output>
-	</div>
-    <div id="scene" style="height:487.5px; width:650px; float: left; margin-left:2%"></div>
-</div>
-
-<div class="split right">
-    <div>
+    <div id="title">
+        Capillary Action
+    </div>
+    <div class="split left">
         <div class="tabs">
             <ul class="tab-links">
-                <li class="active"><a href="#tab1">Trajectory</a></li>
-                <li><a href="#tab2">Velocity Profile</a></li>
-                <li><a href="#tab3">Plots</a></li>
-                <li><a href="#tab4">Solid Liquid Interface</a></li>
+                <li class="active"><a href="#tab1">Play</a></li>
+                <li><a href="#tab2">Pause</a></li>
+                <li><a href="#tab3">Reset</a></li>
             </ul>
+            <div class="sliderclass" style="height:40px;margin-bottom:2%">
+                <input type="range" name="weight" id="range_weight" value="5" min="1" max="100" style="width:35%;float:left;margin-top:1.5%;margin-right:1.5%; margin-left:6%" oninput="range_weight_disp.value = range_weight.value"/>
+                <output  id="range_weight_disp" style="width:10%;height:30px;font-size:20px;margin-left:1.5%;color:white"><font color="white"></font></output>
+            </div>
+            <div id="scene" style="height:487.5px; width:650px; float: left; margin-left:2%"></div>
+        </div>
+    </div>
 
-            <div class="tab-content">
-                <div id="tab1" class="tab active">
-                    <div id="trajectory_scene" style="float: left; height:487.5px; width:650px; margin-left:1%"></div>
-                </div>
+    <div class="split right">
+        <div>
+            <div class="tabs">
+                <ul class="tab-links">
+                    <li class="active"><a href="#tab1">Trajectory</a></li>
+                    <li><a href="#tab2">Velocity Profile</a></li>
+                    <li><a href="#tab3">Plots</a></li>
+                    <li><a href="#tab4">Solid Liquid Interface</a></li>
+                </ul>
 
-                <div id="tab2" class="tab">
-                    <div id="velocity_profile" style="float: left; height:487.5px; width:650px; margin-left:1%"></div>
-                </div>
+                <div class="tab-content">
+                    <div id="tab1" class="tab active">
+                        <div id="trajectory_scene" style="float: left; height:487.5px; width:650px; margin-left:1%"></div>
+                    </div>
 
-                <div id="tab3" class="tab">
-                    <p>Tab #3 content goes here!</p>
-                </div>
+                    <div id="tab2" class="tab">
+                        <div id="velocity_profile" style="float: left; height:487.5px; width:650px; margin-left:1%"></div>
+                    </div>
 
-                <div id="tab4" class="tab">
-                    <p>Tab #4 content goes here!</p>
+                    <div id="tab3" class="tab">
+                        <p>Tab #3 content goes here!</p>
+                    </div>
+
+                    <div id="tab4" class="tab">
+                        <p>Tab #4 content goes here!</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- JS Source -->
-<script src="./src/js/tabs.js"></script>
-<script src="./src/js/script.js"></script>
+    <!-- JS Source -->
+    <script src="./src/js/tabs.js"></script>
+    <script src="./src/js/script.js"></script>
 </body>
 </html>

@@ -122,7 +122,7 @@ function createSolidCloud() {
     var g = new THREE.Geometry();
     for(var i=0;i<json.length;i++) {
         if(json[i].label[0] == 3) {
-            g.vertices.push(new THREE.Vector3(json[i].xPos[0]-5.5, json[i].yPos[0]-160, json[i].zPos[0]));
+            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
             g.colors.push(new THREE.Color("rgb(255,255,255)"))
         }
     }
@@ -141,7 +141,7 @@ function createLiquidCloud() {
         if(json[i].label[0] != 3){
             // vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
             vectors.push(i);
-            g.vertices.push(new THREE.Vector3(json[i].xPos[0]-5.5, json[i].yPos[0]-160, json[i].zPos[0]));
+            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
             g.colors.push(new THREE.Color("rgb(49,130,189)"))
         }
     }
@@ -207,8 +207,8 @@ function render() {
         }, 1000);
         pass++;
     	for (var i = 0; i < vectors.length; i++) {
-            pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass]-5.5;
-            pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass]-160;
+            pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass];
+            pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass];
             pointCloud.geometry.vertices[i].z = json[vectors[i]].zPos[pass];
         }
 
