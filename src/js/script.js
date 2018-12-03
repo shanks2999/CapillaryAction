@@ -21,6 +21,7 @@ var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable
 var planePoints=[], vPlanePoints=[];
 
 readJSON();
+readHeightData();
 createInitialScene();
 createTrajectoryScene();
 createSolidCloud();
@@ -29,6 +30,7 @@ createRectangle();
 createHorizontalRectangle();
 createVelocityProfile();
 createPlots();
+createPlotl();
 
 document.addEventListener("keydown", onArrowKeyDown, false);
 window.addEventListener( 'mousedown', onMouseDown, false );
@@ -376,7 +378,7 @@ function readHeightData(){
 		for(var i = 0; i<json.length; i++)
 		{
 			if(json[i]['label'][0]!=3)
-				heightInstArray.push(json[i]['yPos'][j]);	
+				heightInstArray.push(json[i]['yPos'][j]+160);	
 		}
 		heightInstArray.sort(function(a, b){return b - a});
 		var intermediate = heightInstArray.slice(0,50);
@@ -398,7 +400,6 @@ function readHeightData(){
 };
 
 function createPlots() {
-	readHeightData();
 
     var start = 0,
       end = 1.8,
@@ -446,22 +447,13 @@ function createPlots() {
         barWidth = (spiralLength / 225) - 1;
     var someData = [];
     for (var i = 0; i < N; i++) {
-      /*var currentDate = new Date();
-      currentDate.setDate(currentDate.getDate() + i);*/
-	  var v = sdArray[i];
+      var v = sdArray[i];
       someData.push({
-        //date: currentDate,
         timeIndex: i+1,
 		value: sdArray[i],
         group: (v<0.12)?1:((v<0.28)?2:((v<0.38)?3:4))
       });
     }
-
-    /*var timeScale = d3.scaleTime()
-      .domain(d3.extent(someData, function(d){
-        return d.timeIndex;
-      }))
-      .range([0, spiralLength]);*/
 	  
 	var timeScale = d3.scaleLinear()
       .domain(d3.extent(someData, function(d){
@@ -578,4 +570,121 @@ function createPlots() {
         tooltip.style('display', 'none');
         tooltip.style('opacity',0);
     });
+};
+
+function createPlotl(){
+	
+	//Use the margin convention practice 
+	var margin = {top: 100, right: 100, bottom: 100, left: 100}, 
+		width1 = width - margin.left - margin.right,  
+		height1 = height - margin.top - margin.bottom; 
+
+	// The number of datapoints
+	var n = 90;
+
+	var someData = [];
+    for (var i = 0; i < n; i++) {
+      var v = sdArray[i];
+      someData.push({
+        timeIndex: i+1,
+		value: sdArray[i],
+        group: (v<0.12)?1:((v<0.28)?2:((v<0.38)?3:4))
+      });
+    }
+	
+	// X scale will use the index of our data
+	var xScale = d3.scaleLinear()
+		.domain([0, n-1]) 
+		.range([0, width1]); 
+
+	// Y scale will use the height values 
+	var yScale = d3.scaleLinear()
+		.domain([0, d3.max(someData, function(d){
+		return d.value;
+		})])  
+		.range([height1, 0]);  
+
+	// d3's line generator
+	var line = d3.line()
+		.x(function(d, i) { return xScale(i); }) 
+		.y(function(d) { return yScale(d.value); })  
+		.curve(d3.curveMonotoneX) 
+
+	// An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
+	//var dataset = d3.range(n).map(function(d) { return {"y": d3.randomUniform(1)() } })
+
+	// 1. Add the SVG to the page and employ #2
+	var svg = d3.select("#plotl_scene").append("svg")
+		.attr("width", width1 + margin.left + margin.right)
+		.attr("height", height1 + margin.top + margin.bottom)
+		.style("background", "white")
+		.style("border-style", "solid")
+		.style("border-color", "white")
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	// 3. Call the x axis in a group tag
+	svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + height1 + ")")
+		.call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
+
+	// 4. Call the y axis in a group tag
+	svg.append("g")
+		.attr("class", "y axis")
+		.call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
+
+	// 9. Append the path, bind the data, and call the line generator 
+	svg.append("path")
+		.datum(someData) // 10. Binds data to the line 
+		.attr("class", "line") // Assign a class for styling 
+		.attr("d", line); // 11. Calls the line generator 
+
+	// 12. Appends a circle for each datapoint 
+	svg.selectAll(".dot")
+		.data(someData)
+	  .enter().append("circle") // Uses the enter().append() method
+		.attr("class", "dot") // Assign a class for styling
+		.attr("cx", function(d, i) { return xScale(i) })
+		.attr("cy", function(d) { return yScale(d.value) })
+		.attr("r", 3);
+		
+	var tooltip = d3.select("#plotl_scene")
+    .append('div')
+    .attr('class', 'tooltip');
+
+    tooltip.append('div')
+    .attr('class', 'timeIndex');
+    tooltip.append('div')
+    .attr('class', 'value');
+	
+	svg.selectAll(".dot")
+    .on('mouseover', function(d) {
+        tooltip.select('.timeIndex').html("Time Instance: <b>" + d.timeIndex + " sec.</b>");
+        tooltip.select('.value').html("Standard Deviation: <b>" + d.value + "<b>");
+        tooltip.style('display', 'block');
+        tooltip.style('opacity',2);
+		
+		d3.select(this)
+        .style("fill","#000000")
+        .style("stroke","#000000")
+        .style("stroke-width","0.3px");
+    })
+    .on('mousemove', function(d) {
+        tooltip.style('top', (d3.event.layerY + 10) + 'px')
+        .style('left', (d3.event.layerX - 25) + 'px');
+    })
+    .on('mouseout', function(d) {
+		d3.selectAll(".dot")
+        .style("fill", '#fff')
+        .style("stroke", "#000")
+		.style("stroke-width","0.3px");
+		
+        tooltip.style('display', 'none');
+        tooltip.style('opacity',0);
+    });
+};
+
+function createPlotb(){
+
 };
