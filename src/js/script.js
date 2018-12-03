@@ -18,7 +18,9 @@ var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
 var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=40, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
 var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
-var planePoints=[], vPlanePoints=[];
+var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=3, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
+var planePoints=[], vPlanePoints=[], zPlanePoints=[];
+var arrow;
 
 readJSON();
 readHeightData();
@@ -27,7 +29,6 @@ createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
 createRectangle();
-createHorizontalRectangle();
 createVelocityProfileScene();
 createPlots();
 createPlotl();
@@ -285,7 +286,7 @@ function onArrowKeyDown(event) {
         }
         velocityPoints(planePoints);
         //console.log(cuboid.position.z);
-        console.log(planePoints.length);
+        //console.log(planePoints.length);
         planePoints=[];
 
     }
@@ -306,14 +307,14 @@ function onArrowKeyDown(event) {
             }
 
         }
-        //sidePlot(planePoints);
+        velocityPoints(planePoints);
         //console.log(cuboid.position.z);
-        console.log(planePoints.length);
+        //console.log(planePoints.length);
         planePoints=[];
 
     }
 
-    if (keyCode==83 && planeUpMovable && !running){
+   else if (keyCode==83 && planeUpMovable && !running){
         planeDownMovable = true;
         verticalCuboid.translateY(-0.1);
         yTranslateValue -= 0.1;
@@ -327,6 +328,7 @@ function onArrowKeyDown(event) {
             }
 
         }
+        velocityPoints(vPlanePoints);
         //vSidePlot(vPlanePoints);
         //console.log(cuboid.position.z);
         console.log(vPlanePoints.length);
@@ -348,9 +350,58 @@ function onArrowKeyDown(event) {
 
         }
         //vSidePlot(vPlanePoints);
+        velocityPoints(vPlanePoints);
         //console.log(cuboid.position.z);
         console.log(vPlanePoints.length);
         vPlanePoints=[];
+
+    }
+
+    else if (keyCode==69 && planeOutMovable && !running){
+        planeOutMovable = true;
+        zCuboid.translateZ(-0.1);
+        zTranslateValue -= 0.1;
+        if(-zTranslateValue > 10)
+            planeBehindMovable = false;
+        for (i = 0; i < json.length; i++)
+        {
+            if(Math.abs(json[i]['zPos'][pass]-zTranslateValue)<0.09 && json[i]['label'][0]!=3)
+            {
+                if (json[i]['yPos'][pass]>-59 && json[i]['yPos'][pass]<45)
+                {
+                    zPlanePoints.push(json[i]);
+                }
+
+            }
+
+        }
+        velocityPoints(zPlanePoints);
+        //console.log(cuboid.position.z);
+        //console.log(planePoints.length);
+        zPlanePoints=[];
+
+    }
+    else if (keyCode==90 && planeBehindMovable && !running){
+        planeBehindMovable = true;
+        zCuboid.translateZ(0.1);
+        zTranslateValue += 0.1;
+        if(zTranslateValue > 18)
+            planeOutMovable = false;
+        for (i = 0; i < json.length; i++)
+        {
+            if(Math.abs(json[i]['zPos'][pass]-zTranslateValue)<0.09 && json[i]['label'][0]!=3)
+            {
+                if (json[i]['yPos'][pass]>-59 && json[i]['yPos'][pass]<45)
+                {
+                    zPlanePoints.push(json[i]);
+                }
+            }
+
+        }
+        velocityPoints(zPlanePoints);
+        //console.log(cuboid.position.z);
+        //console.log(planePoints.length);
+        zPlanePoints=[];
 
     }
 };
@@ -364,25 +415,35 @@ function createRectangle() {
     cuboid.position.y = -8;
     scene.add( cuboid );
 
-};
-
-function createHorizontalRectangle() {
-
     var geometry = new THREE.BoxGeometry(vCubeWidth,vCubeHeight,vCubeLength);
     var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
     verticalCuboid = new THREE.Mesh( geometry, material );
     scene.add( verticalCuboid );
 
+    var geometry = new THREE.BoxGeometry(zCubeWidth,zCubeHeight,zCubeLength);
+    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
+    zCuboid = new THREE.Mesh( geometry, material );
+    scene.add( zCuboid );
+
 };
 
+
 function velocityPoints(planePoints){
-    sceneV.remove(velocityCloud);
+    sceneT.remove(velocityCloud);
+    sceneT.remove(arrow);
     console.log("Inside func");
     //console.log(planePoints.length);
     var g = new THREE.Geometry();
     for(var i=0;i<planePoints.length;i++) {
+        if(pass<90) {
             g.vertices.push(new THREE.Vector3(planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]));
             g.colors.push(new THREE.Color("rgb(49,130,189)"));
+            var origin = new THREE.Vector3(planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]);
+            var terminus = new THREE.Vector3((planePoints[i].xPos[pass + 1], planePoints[i].yPos[pass + 1], planePoints[i].zPos[pass + 1]));
+            var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
+            arrow = new THREE.ArrowHelper(direction, origin, 20, 0x884400);
+            sceneT.add(arrow);
+        }
     }
     var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
         alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
@@ -391,12 +452,7 @@ function velocityPoints(planePoints){
     velocityCloud = new THREE.Points( g, m );
     velocityCloud.name = 'velocityCloud';
     sceneT.add(velocityCloud);
-    var origin = new THREE.Vector3(planePoints[0].xPos[pass], planePoints[0].yPos[pass], planePoints[0].zPos[pass]);
-    var terminus  = new THREE.Vector3((planePoints[100].xPos[pass], planePoints[100].yPos[pass], planePoints[100].zPos[pass]));
-    var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
-    var arrow = new THREE.ArrowHelper(direction, origin, 10, 0x884400);
-    sceneT.add(arrow);
-    //rendererV.render( sceneV, cameraV );
+
 };
 
 
