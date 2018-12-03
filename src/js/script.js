@@ -391,7 +391,6 @@ function velocityPoints(planePoints){
     velocityCloud = new THREE.Points( g, m );
     velocityCloud.name = 'velocityCloud';
     sceneT.add(velocityCloud);
-    var newVelocity = 
     var origin = new THREE.Vector3(planePoints[0].xPos[pass], planePoints[0].yPos[pass], planePoints[0].zPos[pass]);
     var terminus  = new THREE.Vector3((planePoints[100].xPos[pass], planePoints[100].yPos[pass], planePoints[100].zPos[pass]));
     var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
