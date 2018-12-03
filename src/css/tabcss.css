@@ -53,3 +53,52 @@ li.active a, li.active a:hover {
 .tab.active {
     display:block;
 }
+
+.tabx-links:after {
+    display:block;
+    clear:both;
+    content:'';
+}
+
+.tabx-links li {
+    margin:0px 5px;
+    float:left;
+    list-style:none;
+}
+
+.tabx-links a {
+    padding:9px 15px;
+    display:inline-block;
+    border-radius:3px 3px 0px 0px;
+    background:#05386b;
+    font-size:16px;
+    font-weight:600;
+    color:#edf5e1;
+    transition:all linear 0.15s;
+}
+
+.tabx-links a:hover {
+    background:#379683;
+    text-decoration:none;
+}
+
+/*----- Content of Tabs -----*/
+.tabx-content {
+    padding:15px;
+    border-radius:3px;
+    box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+    background:#000;
+}
+
+.tabx {
+    display:none;
+}
+
+.tabx.activex {
+	display:block;
+}
+
+li.activex a, li.activex a:hover {
+    background:#fff;
+    color:#4c4c4c;
+}
