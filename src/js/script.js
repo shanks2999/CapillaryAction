@@ -17,7 +17,8 @@ var sceneT, cameraT, lightT, rendererT, pointTrajectory;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
 var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=80, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
-var planePoints=[];
+var verticalCuboid, vCubeWidth=50, vCubeHeight=3, vCubeLength=50, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
+var planePoints=[], vPlanePoints=[];
 
 readJSON();
 createInitialScene();
@@ -25,6 +26,7 @@ createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
 createRectangle();
+createHorizontalRectangle();
 createVelocityProfile();
 
 document.addEventListener("keydown", onArrowKeyDown, false);
@@ -265,7 +267,7 @@ function onArrowKeyDown(event) {
         runningT = false;
     }
 
-    if (keyCode==87 && planeBackMovable && !running){
+    if (keyCode==65 && planeBackMovable && !running){
         planeFrontMovable = true;
         cuboid.translateX(-0.1);
         xTranslateValue -= 0.1;
@@ -285,12 +287,65 @@ function onArrowKeyDown(event) {
         planePoints=[];
 
     }
-    else if (keyCode==83 && planeFrontMovable && !running){
+    else if (keyCode==68 && planeFrontMovable && !running){
         planeBackMovable = true;
         cuboid.translateX(0.1);
         xTranslateValue += 0.1;
         if(xTranslateValue > 18)
             planeFrontMovable = false;
+        for (i = 0; i < json.length; i++)
+        {
+            if(Math.abs(json[i]['xPos'][pass]-xTranslateValue-5.5)<0.09)
+            {
+                planePoints.push(json[i]);
+            }
+
+        }
+        //sidePlot(planePoints);
+        //console.log(cuboid.position.z);
+        console.log(planePoints.length);
+        planePoints=[];
+
+    }
+
+    if (keyCode==87 && planeUpMovable && !running){
+        planeDownMovable = true;
+        verticalCuboid.translateY(-0.1);
+        yTranslateValue -= 0.1;
+        if(-yTranslateValue > 10)
+            planeUpMovable = false;
+        for (i = 0; i < json.length; i++)
+        {
+            if(Math.abs(json[i]['yPos'][pass]-yTranslateValue-160)<0.09)
+            {
+                vPlanePoints.push(json[i]);
+            }
+
+        }
+        //sidePlot(planePoints);
+        //console.log(cuboid.position.z);
+        console.log(vPlanePoints.length);
+        vPlanePoints=[];
+
+    }
+    else if (keyCode==83 && planeDownMovable && !running){
+        planeUpMovable = true;
+        verticalCuboid.translateY(0.1);
+        yTranslateValue += 0.1;
+        if(yTranslateValue > 18)
+            planeDownMovable = false;
+        for (i = 0; i < json.length; i++)
+        {
+            if(Math.abs(json[i]['yPos'][pass]-yTranslateValue-160)<0.09)
+            {
+                vPlanePoints.push(json[i]);
+            }
+
+        }
+        //sidePlot(planePoints);
+        //console.log(cuboid.position.z);
+        console.log(vPlanePoints.length);
+        vPlanePoints=[];
 
     }
 };
@@ -299,10 +354,19 @@ function onArrowKeyDown(event) {
 function createRectangle() {
 
     var geometry = new THREE.BoxGeometry(cubeWidth,cubeHeight,cubeLength);
-    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc"} );
+    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
     cuboid = new THREE.Mesh( geometry, material );
     cuboid.position.y = -8;
     scene.add( cuboid );
+
+};
+
+function createHorizontalRectangle() {
+
+    var geometry = new THREE.BoxGeometry(vCubeWidth,vCubeHeight,vCubeLength);
+    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
+    verticalCuboid = new THREE.Mesh( geometry, material );
+    scene.add( verticalCuboid );
 
 };
 
