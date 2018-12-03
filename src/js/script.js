@@ -12,7 +12,7 @@ var width = 650
 var height = width * 0.75;
 var mouse, raycaster;
 var scene, camera, light, renderer, pointCloud;
-var sceneV, cameraV, lightV, rendererV;
+var sceneV, cameraV, lightV, rendererV,velocityCloud;
 var sceneT, cameraT, lightT, rendererT, pointTrajectory;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
@@ -28,7 +28,7 @@ createSolidCloud();
 createLiquidCloud();
 createRectangle();
 createHorizontalRectangle();
-createVelocityProfile();
+createVelocityProfileScene();
 createPlots();
 createPlotl();
 
@@ -112,11 +112,14 @@ function createTrajectoryScene() {
     myOptionsT.update();
 }
 
-function createVelocityProfile() {
+function createVelocityProfileScene() {
     sceneV = new THREE.Scene();
     cameraV = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
     cameraV.position.set(30,175,150);
     cameraV.lookAt(-10,-20,0);
+    camera.fov *= 1;
+    camera.zoom = 14;
+    camera.updateProjectionMatrix();
 
     lightV = new THREE.DirectionalLight( 0xffffff, 1.5);
     lightV.position.set(0,2,20);
@@ -130,6 +133,7 @@ function createVelocityProfile() {
     document.getElementById("velocity_profile").appendChild( rendererV.domElement );
 
     var myOptionsV = new THREE.OrbitControls(cameraV, rendererV.domElement);
+    myOptionsV.enablePan = false;
     myOptionsV.update();
 }
 
@@ -279,7 +283,7 @@ function onArrowKeyDown(event) {
             }
 
         }
-        //sidePlot(planePoints);
+        velocityPoints(planePoints);
         //console.log(cuboid.position.z);
         console.log(planePoints.length);
         planePoints=[];
@@ -323,7 +327,7 @@ function onArrowKeyDown(event) {
             }
 
         }
-        //sidePlot(planePoints);
+        //vSidePlot(vPlanePoints);
         //console.log(cuboid.position.z);
         console.log(vPlanePoints.length);
         vPlanePoints=[];
@@ -343,7 +347,7 @@ function onArrowKeyDown(event) {
             }
 
         }
-        //sidePlot(planePoints);
+        //vSidePlot(vPlanePoints);
         //console.log(cuboid.position.z);
         console.log(vPlanePoints.length);
         vPlanePoints=[];
@@ -370,6 +374,33 @@ function createHorizontalRectangle() {
     scene.add( verticalCuboid );
 
 };
+
+function velocityPoints(planePoints){
+    sceneV.remove(velocityCloud);
+    console.log("Inside func");
+    //console.log(planePoints.length);
+    var g = new THREE.Geometry();
+    for(var i=0;i<planePoints.length;i++) {
+            g.vertices.push(new THREE.Vector3(planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]));
+            g.colors.push(new THREE.Color("rgb(49,130,189)"));
+    }
+    var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
+        alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // var solidCloud = new THREE.Points( g, m );
+    // solidCloud.name = 'solidCloud';
+    velocityCloud = new THREE.Points( g, m );
+    velocityCloud.name = 'velocityCloud';
+    sceneT.add(velocityCloud);
+    var newVelocity = 
+    var origin = new THREE.Vector3(planePoints[0].xPos[pass], planePoints[0].yPos[pass], planePoints[0].zPos[pass]);
+    var terminus  = new THREE.Vector3((planePoints[100].xPos[pass], planePoints[100].yPos[pass], planePoints[100].zPos[pass]));
+    var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
+    var arrow = new THREE.ArrowHelper(direction, origin, 10, 0x884400);
+    sceneT.add(arrow);
+    //rendererV.render( sceneV, cameraV );
+};
+
+
 
 function readHeightData(){
 	for(var j = 0; j< 90; j++)
