@@ -373,33 +373,6 @@ function createHorizontalRectangle() {
 
 };
 
-
-
-	/*var raycaster = new THREE.Raycaster(); 
-	var mouse = new THREE.Vector2();
-	renderer.domElement.addEventListener('click', function(e){
-		mouse.x = ( e.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-		mouse.y = - ( e.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-        
-		console.log(mouse);
-        raycaster.setFromCamera( mouse, camera );
-		raycaster.params.Points.threshold = 20;
-        var intersects = raycaster.intersectObjects(scene.children, true);
- 
-        if(intersects.length==0)
-		{
-			console.log("No object.");
-		}
-		if(intersects.length > 0){
-            console.log(intersects[0]);
-            //var color = Math.random() * 0xffffff;
-            //intersects[ 0 ].object.material.color.setHex( color );
-        }
-        renderer.render( scene, camera );
-    }, false);*/
-
-// })
-
 function readHeightData(){
 	for(var j = 0; j< 90; j++)
 	{
