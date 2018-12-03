@@ -269,7 +269,11 @@ function onArrowKeyDown(event) {
         {
             if(Math.abs(json[i]['xPos'][pass]-xTranslateValue)<0.09 && json[i]['label'][0]!=3)
             {
-                planePoints.push(json[i]);
+                if (json[i]['yPos'][pass]>-59 && json[i]['yPos'][pass]<45)
+                {
+                    planePoints.push(json[i]);
+                }
+
             }
 
         }
@@ -289,7 +293,10 @@ function onArrowKeyDown(event) {
         {
             if(Math.abs(json[i]['xPos'][pass]-xTranslateValue)<0.09 && json[i]['label'][0]!=3)
             {
-                planePoints.push(json[i]);
+                if (json[i]['yPos'][pass]>-59 && json[i]['yPos'][pass]<45)
+                {
+                    planePoints.push(json[i]);
+                }
             }
 
         }
