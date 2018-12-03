@@ -5,7 +5,7 @@ def getCurrentDirectoryFiles():
     return sorted(arrFiles)
 
 
-def  pushDataToHeap(arrFiles):
+def pushDataToHeap(arrFiles):
     import pandas as pd
     data = []
     count = 1
@@ -17,16 +17,16 @@ def  pushDataToHeap(arrFiles):
             if len(data) == index:
                 data.append(dict())
                 data[index]['id'] = index
-                data[index]['xPos'] = [row['xPos']]
-                data[index]['yPos'] = [row['yPos']]
+                data[index]['xPos'] = [row['xPos']-5.5]
+                data[index]['yPos'] = [row['yPos']-160]
                 data[index]['zPos'] = [row['zPos']]
                 data[index]['label'] = [row['label']]
                 data[index]['xVel'] = [row['xVel']]
                 data[index]['yVel'] = [row['yVel']]
                 data[index]['zVel'] = [row['zVel']]
             else:
-                data[index]['xPos'].append(row['xPos'])
-                data[index]['yPos'].append(row['yPos'])
+                data[index]['xPos'].append(row['xPos']-5.5)
+                data[index]['yPos'].append(row['yPos']-160)
                 data[index]['zPos'].append(row['zPos'])
                 data[index]['label'].append(row['label'])
                 data[index]['xVel'].append(row['xVel'])

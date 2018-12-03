@@ -3,9 +3,7 @@
 var json;
 var count = 0;
 var pass = 0;
-var passT = 0;
 var running = true;
-var runningT = false;
 var i=0;
 var heightArray = [];
 var sdArray = [];
@@ -51,6 +49,19 @@ function readJSON() {
 
 
 function createInitialScene() {
+    // var min=Number.MAX_SAFE_INTEGER;
+    // var max=-Number.MAX_SAFE_INTEGER
+    // for(var i=0;i<json.length;i++){
+    //     if(json[i].label[0]==3){
+    //         if(json[i].yPos[0] > max)
+    //             max = json[i].yPos[0]
+    //         if(json[i].yPos[0] < min)
+    //             min = json[i].yPos[0]
+    //     }
+    // }
+    // console.log(min)
+    // console.log(max)
+
     raycaster = new THREE.Raycaster();
     raycaster.params.Points.threshold = 10;
     mouse = new THREE.Vector2();
@@ -159,48 +170,8 @@ function createLiquidCloud() {
 
 
 function createTrajectory(){
-    renderT();
-    function renderT() {
-        if(sceneT.getObjectByName('pointTrajectory')) {
-            var selectedObject = sceneT.getObjectByName('pointTrajectory');
-            sceneT.remove(selectedObject);
-        }
-        // sceneT.remove(pointTrajectory);
-        var gT = new THREE.Geometry();
-        var vectorsT = [];
-        var mT = new THREE.PointsMaterial( { size: 20, sizeAttenuation: false, map: sprite,
-            alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
-        if(running == true) {
-            setTimeout(function() {
-                requestAnimationFrame(renderT);
-            }, 1000);
-            passT++;
-            for (var i = 0; i < passT; i++) {
-            	gT.vertices.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-            	vectorsT.push(new THREE.Vector3(json[10000].xPos[0], json[10000].yPos[0], json[10000].zPos[0]));
-            	gT.vertices[i].x = json[10000].xPos[passT];
-            gT.vertices[i].y = json[10000].yPos[passT];
-            gT.vertices[i].z = json[10000].zPos[passT];
-            	gT.colors.push(new THREE.Color("rgb(227,74,51)"));
-            }
-            pointTrajectory = new THREE.Points(gT, mT);
-            pointTrajectory.name = 'pointTrajectory';
-            sceneT.add(pointTrajectory);
-
-            rendererT.render( sceneT, cameraT );
-            if (passT >= 90)
-                passT = 0;
-            pointCloud.geometry.verticesNeedUpdate = true;
-            // pointTrajectory.geometry.verticesNeedUpdate = true;
-        }
-        else {
-            requestAnimationFrame(renderT);
-            rendererT.render( sceneT, cameraT );
-        }
-    }
 
 }
-
 
 render();
 function render() {
@@ -208,21 +179,30 @@ function render() {
         setTimeout(function() {
             requestAnimationFrame(render);
         }, 1000);
-        pass++;
-    	for (var i = 0; i < vectors.length; i++) {
+
+        for (var i = 0; i < vectors.length; i++) {
             pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass];
             pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass];
             pointCloud.geometry.vertices[i].z = json[vectors[i]].zPos[pass];
         }
-
-    	renderer.render( scene, camera );
+        if(pointTrajectory) {
+            pointTrajectory.geometry.vertices[0].x = json[10000].xPos[pass];
+            pointTrajectory.geometry.vertices[0].y = json[10000].yPos[pass];
+            pointTrajectory.geometry.vertices[0].z = json[10000].zPos[pass];
+            pointTrajectory.geometry.verticesNeedUpdate = true;
+        }
+        pass++;
+        renderer.render( scene, camera );
+        rendererT.render( sceneT, cameraT );
         if (pass >= json[0].xPos.length)
             pass = 0;
         pointCloud.geometry.verticesNeedUpdate = true;
+
     }
     else {
         requestAnimationFrame(render);
         renderer.render( scene, camera );
+        rendererT.render( sceneT, cameraT );
     }
 }
 
@@ -243,7 +223,19 @@ function onMouseDown(e) {
         var particle = intersects[0];
         console.log('Particle Clicked ', particle);
 
-        createTrajectory()
+        if(sceneT.getObjectByName('pointTrajectory')) {
+            var selectedObject = sceneT.getObjectByName('pointTrajectory');
+            sceneT.remove(selectedObject);
+        }
+        var gT = new THREE.Geometry();
+        var mT = new THREE.PointsMaterial( { size: 20, sizeAttenuation: false, map: sprite,
+            alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+        gT.vertices.push(new THREE.Vector3(json[vectors[0]].xPos[0], json[vectors[0]].yPos[0], json[vectors[0]].zPos[0]));
+        gT.colors.push(new THREE.Color("rgb(227,74,51)"));
+        pointTrajectory = new THREE.Points(gT, mT);
+        pointTrajectory.name = 'pointTrajectory';
+        sceneT.add(pointTrajectory);
+        createTrajectory(pointTrajectory);
     }
     else{
         console.log('NO Particle Clicked');
@@ -261,13 +253,6 @@ function onArrowKeyDown(event) {
         running = false;
         console.log(pass);
         render();
-    }
-    if (keyCode == 13) {
-        runningT = true;
-    }
-    else  if (keyCode == 13) {
-        console.log(pass);
-        runningT = false;
     }
 
     if (keyCode==65 && planeBackMovable && !running){
