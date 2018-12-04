@@ -11,17 +11,16 @@ var timeout = 1000;
 var width = 650
 var height = width * 0.75;
 var raycaster;
-var scene, camera, light, renderer;
-var sceneV, cameraV, lightV, rendererV;
+var scene, camera, light, renderer, pointCloud;
+var sceneV, cameraV, lightV, rendererV,velocityCloud;
 var sceneT, cameraT, lightT, rendererT;
+var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
 var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=40, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
 var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
 var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=3, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
 var planePoints=[], vPlanePoints=[], zPlanePoints=[];
 var arrow;
-var groupArrow = new THREE.Group();
-var groupVelocity = new THREE.Group();
 var groupSolidA = new THREE.Group();
 var groupSolidB = new THREE.Group();
 var groupLiquid = new THREE.Group();
@@ -34,8 +33,8 @@ createInitialScene();
 createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
-createRectangle();
-createVelocityProfileScene();
+// createRectangle();
+// createVelocityProfileScene();
 createPlots();
 createPlotl();
 
@@ -96,14 +95,13 @@ function createInitialScene() {
     document.getElementById("scene").appendChild( renderer.domElement );
     var myOptions = new THREE.OrbitControls(camera, renderer.domElement);
     myOptions.enablePan = false;
-    myOptions.zoomSpeed = 2.0;
     myOptions.update();
 }
 
 
 function createTrajectoryScene() {
     sceneT = new THREE.Scene();
-    cameraT = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+    cameraT = new THREE.PerspectiveCamera( 90, width / height, 0.1, 3000 );
     cameraT.position.set(100,475,750);
     cameraT.lookAt(30,150,20);
     cameraT.fov *= 1;
@@ -129,11 +127,11 @@ function createTrajectoryScene() {
 function createVelocityProfileScene() {
     sceneV = new THREE.Scene();
     cameraV = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-    cameraV.position.set(100,475,750);
-    cameraV.lookAt(30,150,20);
-    cameraV.fov *= 1;
-    cameraV.zoom = 16;
-    cameraV.updateProjectionMatrix();
+    cameraV.position.set(30,175,150);
+    cameraV.lookAt(-10,-20,0);
+    camera.fov *= 1;
+    camera.zoom = 14;
+    camera.updateProjectionMatrix();
 
     lightV = new THREE.DirectionalLight( 0xffffff, 1.5);
     lightV.position.set(0,2,20);
@@ -170,9 +168,71 @@ function createSolidCloud() {
 
             groupSolidA.add(meshA);
             groupSolidB.add(meshB);
+
+            // var g = new THREE.Geometry();
+            // g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+            // g.colors.push(new THREE.Color())
+            // // var m = new THREE.PointsMaterial( { size:100, sizeAttenuation: false, map: sprite,
+            // //     alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+            // var m = new THREE.PointsMaterial({
+            //     vertexColors: THREE.VertexColors,
+            //     size: 10
+            // });
+            // groupSolidA.add(new THREE.Points( g, m ));
+            // groupSolidB.add(new THREE.Points( g, m ));
         }
     }
+    // var group3 = new THREE.Object3D();
+    // group3.scale.set( 1, 2, 1 );
+    // group3.position.set( - 5, 0, 0 );
+    // group3.rotation.set( Math.PI / 2, 0, 0 );
+    // groupSolidA.add( group3 );
+    // var ss = new THREE.Sprite( new THREE.SpriteMaterial( { color: '#69f' } ) );
+    // ss.position.set( 0, 2, 5 );
+    // ss.scale.set( 10, 2, 3 );
+    // // ss.center.set( - 0.1, 0 );
+    // ss.material.rotation = Math.PI / 3;
+    // groupSolidA.add( ss );
+
+
+    // var g = new THREE.Geometry();
+    // for(var i=0;i<json.length;i++) {
+    //     if(json[i].label[0] == 3) {
+    //         g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+    //         g.colors.push(new THREE.Color())
+    //     }
+    // }
+    // var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
+    //     alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // // var solidCloud = new THREE.Points( g, m );
+    // // solidCloud.name = 'solidCloud';
+    // scene.add(new THREE.Points( g, m ));
+    // sceneT.add(new THREE.Points( g, m ));
 }
+
+
+
+// window.addEventListener( "mousemove", onDocumentMouseMove, false );
+// var intersected;
+// function onDocumentMouseMove( event ) {
+//     event.preventDefault();
+//     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+//     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+//     raycaster.setFromCamera( mouse, camera );
+//     var intersections = raycaster.intersectObjects( scene.children, true );
+//     if ( intersections.length > 0 ) {
+//         if ( intersected != intersections[ 0 ].object ) {
+//             if ( intersected ) intersected.material.color.setHex( "#fff5f0" );
+//             intersected = intersections[ 0 ].object;
+//             intersected.material.color.setHex( "#3182bd" );
+//         }
+//         document.body.style.cursor = 'pointer';
+//     } else if ( intersected ) {
+//         intersected.material.color.setHex( "#ffea16" );
+//         intersected = null;
+//         document.body.style.cursor = 'auto';
+//     }
+// }
 
 
 function createLiquidCloud() {
@@ -192,7 +252,26 @@ function createLiquidCloud() {
             groupLiquid.add(liquidMesh);
         }
     }
+
+
+    // var g = new THREE.Geometry();
+    // for(var i=0;i<json.length;i++) {
+    //     if(json[i].label[0] != 3){
+    //         // vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+    //         vectors.push(i);
+    //         g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+    //         g.colors.push(new THREE.Color("rgb(49,130,189)"))
+    //     }
+    // }
+    // // pointCloud = new THREE.Points(g, m);
+    // var m = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, map: sprite,
+    //     alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // // m.color.setHSL( 1.0, 0.3, 0.7 );
+    // pointCloud = new THREE.Points( g, m );
+    // pointCloud.name = 'liquidCloud';
+    // scene.add(pointCloud);
 }
+
 
 render();
 function render() {
@@ -214,17 +293,14 @@ function render() {
         pass++;
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
-        rendererV.render(sceneV, cameraV);
         if (pass >= json[0].xPos.length)
             pass = 0;
-        // pointCloud.geometry.verticesNeedUpdate = true;
 
     }
     else {
         requestAnimationFrame(render);
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
-        rendererV.render(sceneV, cameraV);
     }
 }
 
@@ -479,37 +555,29 @@ function createRectangle() {
 
 
 function velocityPoints(planePoints){
-
-    sceneV.remove(groupVelocity);
-    sceneV.remove(groupArrow);
-    groupArrow = new THREE.Group();
-    groupVelocity = new THREE.Group();
+    sceneT.remove(velocityCloud);
+    sceneT.remove(arrow);
+    console.log("Inside func");
     //console.log(planePoints.length);
-    var gV = new THREE.SphereGeometry( 0.1, 32, 32 );
+    var g = new THREE.Geometry();
     for(var i=0;i<planePoints.length;i++) {
         if(pass<90) {
-
-            var mV = new THREE.MeshBasicMaterial();
-            mV.color.setHex(0x3862AE)
-            var meshV = new THREE.Mesh( gV, mV );
-            meshV.position.set( planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]);
-
-
-            groupVelocity.add(meshV);
-
+            g.vertices.push(new THREE.Vector3(planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]));
+            g.colors.push(new THREE.Color("rgb(49,130,189)"));
             var origin = new THREE.Vector3(planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]);
             var terminus = new THREE.Vector3((planePoints[i].xPos[pass + 1], planePoints[i].yPos[pass + 1], planePoints[i].zPos[pass + 1]));
             var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
-            arrow = new THREE.ArrowHelper(direction, origin, 2, "#fff9af");
-            groupArrow.add(arrow);
+            arrow = new THREE.ArrowHelper(direction, origin, 20, 0x884400);
+            sceneT.add(arrow);
         }
     }
-
-    sceneV.add(groupVelocity);
-    sceneV.add(groupArrow);
-    rendererV.render(sceneV,cameraV);
-
-
+    var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
+        alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // var solidCloud = new THREE.Points( g, m );
+    // solidCloud.name = 'solidCloud';
+    velocityCloud = new THREE.Points( g, m );
+    velocityCloud.name = 'velocityCloud';
+    sceneT.add(velocityCloud);
 
 };
 
