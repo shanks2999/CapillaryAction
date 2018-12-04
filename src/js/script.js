@@ -559,7 +559,7 @@ function velocityPoints(planePoints){
         if(pass<90) {
 
             var mV = new THREE.MeshBasicMaterial();
-            mV.color.setHex(0xFFFFFF)
+            mV.color.setHex(0x3862AE)
             var meshV = new THREE.Mesh( gV, mV );
             meshV.position.set( planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]);
 
@@ -569,7 +569,7 @@ function velocityPoints(planePoints){
             var origin = new THREE.Vector3(planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]);
             var terminus = new THREE.Vector3((planePoints[i].xPos[pass + 1], planePoints[i].yPos[pass + 1], planePoints[i].zPos[pass + 1]));
             var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
-            arrow = new THREE.ArrowHelper(direction, origin, 2, 0x884400);
+            arrow = new THREE.ArrowHelper(direction, origin, 2, "#fff9af");
             groupArrow.add(arrow);
         }
     }
