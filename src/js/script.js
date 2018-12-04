@@ -152,9 +152,12 @@ function createVelocityProfileScene() {
 }
 
 var rangeInput = document.getElementById("range_weight");
-
+rangeInput.setAttribute("min", "1");
+rangeInput.setAttribute("max", json[0].xPos.length);
 rangeInput.addEventListener('mouseup', function() {
-   pass = this.value
+   pass = this.value-1
+    if(!running)
+        matchTimestep()
 });
 function playEvent() {
     running = true;
@@ -164,6 +167,23 @@ function pauseEvent() {
 }
 function resetEvent() {
     pass = 0;
+    rangeInput.value = 1
+    if(!running)
+        matchTimestep()
+}
+
+function matchTimestep()
+{
+    for (var i = 0; i < vectors.length; i++) {
+        groupLiquid.children[i].position.x = json[vectors[i]].xPos[pass];
+        groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
+        groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
+    }
+    if(groupTrajectory) {
+        groupTrajectory.children[0].position.x = json[groupTrajectory.children[0].shanks].xPos[pass];
+        groupTrajectory.children[0].position.y = json[groupTrajectory.children[0].shanks].yPos[pass];
+        groupTrajectory.children[0].position.z = json[groupTrajectory.children[0].shanks].zPos[pass];
+    }
 }
 function createSolidCloud() {
     var gA = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
@@ -213,17 +233,17 @@ function render() {
         setTimeout(function() {
             requestAnimationFrame(render);
         }, timeout);
-
-        for (var i = 0; i < vectors.length; i++) {
-            groupLiquid.children[i].position.x = json[vectors[i]].xPos[pass];
-            groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
-            groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
-        }
-        if(groupTrajectory) {
-            groupTrajectory.children[0].position.x = json[groupTrajectory.children[0].shanks].xPos[pass];
-            groupTrajectory.children[0].position.y = json[groupTrajectory.children[0].shanks].yPos[pass];
-            groupTrajectory.children[0].position.z = json[groupTrajectory.children[0].shanks].zPos[pass];
-        }
+        matchTimestep()
+        // for (var i = 0; i < vectors.length; i++) {
+        //     groupLiquid.children[i].position.x = json[vectors[i]].xPos[pass];
+        //     groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
+        //     groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
+        // }
+        // if(groupTrajectory) {
+        //     groupTrajectory.children[0].position.x = json[groupTrajectory.children[0].shanks].xPos[pass];
+        //     groupTrajectory.children[0].position.y = json[groupTrajectory.children[0].shanks].yPos[pass];
+        //     groupTrajectory.children[0].position.z = json[groupTrajectory.children[0].shanks].zPos[pass];
+        // }
         pass++;
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
