@@ -3,9 +3,11 @@ body {
 }
 
 #title{
-    color:#379683;
+    color:#99ddff;
     text-align: center;
-    margin-top: 1%;
+    margin-bottom: 0.5%;
+    padding-top: 1.5%;
+    background-color: #000000;
     font-size: 200%;
 }
 

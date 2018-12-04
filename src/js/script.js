@@ -215,7 +215,7 @@ function createLiquidCloud() {
         if(json[i].label[0] != 3){
             vectors.push(i);
             var liquidMaterial = new THREE.MeshBasicMaterial();
-            liquidMaterial.color.setHex(0x3862AE)
+            liquidMaterial.color.setHex(0x00aaff)
             var liquidMesh = new THREE.Mesh( liquidGeometry, liquidMaterial );
             liquidMesh.shanks = i;
             liquidMesh.isClicked = false;
@@ -523,7 +523,7 @@ function velocityPoints(planePoints){
         if(pass<90) {
 
             var mV = new THREE.MeshBasicMaterial();
-            mV.color.setHex(0x3862AE)
+            mV.color.setHex(0x00aaff)
             var meshV = new THREE.Mesh( gV, mV );
             meshV.position.set( planePoints[i].xPos[pass], planePoints[i].yPos[pass], planePoints[i].zPos[pass]);
 
