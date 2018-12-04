@@ -1,19 +1,20 @@
 body {
-    font-family: Arial;
+    font-family: "Lucida Sans";
 }
 
 #title{
     color:#99ddff;
     text-align: center;
     margin-bottom: 0.5%;
-    padding-top: 1.5%;
+    padding-top: 0.5%;
     background-color: #000000;
-    font-size: 200%;
+    font-size: 250%;
+    padding-bottom: 0.5%;
 }
 
 .split {
     height: 100%;
-    width: 50%;
+    width: 49.9%;
     position: fixed;
     z-index: 1;
     top: 10%;
