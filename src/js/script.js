@@ -151,7 +151,20 @@ function createVelocityProfileScene() {
     myOptionsV.update();
 }
 
+var rangeInput = document.getElementById("range_weight");
 
+rangeInput.addEventListener('mouseup', function() {
+   pass = this.value
+});
+function playEvent() {
+    running = true;
+}
+function pauseEvent() {
+    running = false;
+}
+function resetEvent() {
+    pass = 0;
+}
 function createSolidCloud() {
     var gA = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
     var gB = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
