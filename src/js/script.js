@@ -24,6 +24,7 @@ var arrow;
 var groupSolidA = new THREE.Group();
 var groupSolidB = new THREE.Group();
 var groupLiquid = new THREE.Group();
+var groupTrajectory = null;
 var hoveredObject = null, clickedObject = null;
 var mouseVector = new THREE.Vector3();
 readJSON();
@@ -297,10 +298,6 @@ function createLiquidCloud() {
 }
 
 
-function createTrajectory(){
-
-}
-
 render();
 function render() {
     if(running == true) {
@@ -314,11 +311,10 @@ function render() {
             groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
             groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
         }
-        if(pointTrajectory) {
-            pointTrajectory.geometry.vertices[0].x = json[10000].xPos[pass];
-            pointTrajectory.geometry.vertices[0].y = json[10000].yPos[pass];
-            pointTrajectory.geometry.vertices[0].z = json[10000].zPos[pass];
-            pointTrajectory.geometry.verticesNeedUpdate = true;
+        if(groupTrajectory) {
+            groupTrajectory.children[0].position.x = json[10000].xPos[pass];
+            groupTrajectory.children[0].position.y = json[10000].yPos[pass];
+            groupTrajectory.children[0].position.z = json[10000].zPos[pass];
         }
         pass++;
         renderer.render( scene, camera );
@@ -352,15 +348,17 @@ function onMouseDown(e) {
                 var selectedObject = sceneT.getObjectByName('pointTrajectory');
                 sceneT.remove(selectedObject);
             }
-
-            var gT = new THREE.SphereGeometry( 0.1, 32, 32 );
+            groupTrajectory = new THREE.Group();
+            sceneT.add(groupTrajectory);
+            var gT = new THREE.SphereGeometry( 5, 32, 32 );
             var mT = new THREE.MeshBasicMaterial();
             mT.color.setHex(0x3862AE)
             var meshT = new THREE.Mesh( gT, mT );
             meshT.shanks = clickedObject.shanks;
             meshT.position.set( json[clickedObject.shanks].xPos[0], json[clickedObject.shanks].yPos[0], json[clickedObject.shanks].zPos[0]);
-            sceneT.add(pointTrajectory);
-            createTrajectory(pointTrajectory);
+            groupTrajectory.add(meshT)
+            groupTrajectory.name = 'pointTrajectory'
+
         }
     }
     else
