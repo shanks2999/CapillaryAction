@@ -14,23 +14,29 @@ var raycaster;
 var scene, camera, light, renderer;
 var sceneV, cameraV, lightV, rendererV;
 var sceneT, cameraT, lightT, rendererT;
+var sceneI, cameraI, lightI, rendererI;
 var vectors = []
+var interfaceVectors=[];
 var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=40, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
-var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
-var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=3, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
+var verticalCuboid, vCubeWidth=25, vCubeHeight=1, vCubeLength=25, planeUpMovable = true, planeDownMovable = true, yTranslateValue = 0;
+var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=1, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
 var planePoints=[], vPlanePoints=[], zPlanePoints=[];
 var arrow;
 var groupArrow = new THREE.Group();
 var groupVelocity = new THREE.Group();
 var groupSolidA = new THREE.Group();
 var groupSolidB = new THREE.Group();
+var groupSolidC = new THREE.Group();
 var groupLiquid = new THREE.Group();
 var groupTrajectory = null;
+var groupInterface = new THREE.Group();
 var hoveredObject = null, clickedObject = null;
 var mouseVector = new THREE.Vector3();
 readJSON();
 readHeightData();
 createInitialScene();
+createInterfaceScene();
+createInterfaceCloud();
 createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
@@ -39,6 +45,7 @@ createVelocityProfileScene();
 createPlots();
 createPlotl();
 createPlotb();
+
 
 document.addEventListener("keydown", onArrowKeyDown, false);
 document.getElementById("scene").addEventListener( "mousemove", onDocumentMouseMove, false );
@@ -64,10 +71,10 @@ function createInitialScene() {
     var max=-Number.MAX_SAFE_INTEGER
     for(var i=0;i<json.length;i++){
         if(json[i].label[0]==3){
-            if(json[i].yPos[0] > max)
-                max = json[i].yPos[0]
-            if(json[i].yPos[0] < min)
-                min = json[i].yPos[0]
+            if(json[i].zPos[0] > max)
+                max = json[i].zPos[0]
+            if(json[i].zPos[0] < min)
+                min = json[i].zPos[0]
         }
     }
     console.log("Minimum recorded", min)
@@ -152,6 +159,33 @@ function createVelocityProfileScene() {
     myOptionsV.update();
 }
 
+function createInterfaceScene() {
+    sceneI = new THREE.Scene();
+    cameraI = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+    cameraI.position.set(100,475,750);
+    cameraI.lookAt(30,150,20);
+    cameraI.fov *= 1;
+    cameraI.zoom = 14;
+    cameraI.updateProjectionMatrix();
+
+    lightI = new THREE.DirectionalLight( 0xffffff, 1.5);
+    lightI.position.set(0,2,20);
+    lightI.lookAt(0,0,0);
+    cameraI.add(lightI);
+    sceneI.add(cameraI);
+
+    rendererI = new THREE.WebGLRenderer();
+    rendererI.setPixelRatio( window.devicePixelRatio );
+    rendererI.setSize( width, height );
+    document.getElementById("interface").appendChild( rendererI.domElement );
+
+    var myOptionsI = new THREE.OrbitControls(cameraI, rendererI.domElement);
+    myOptionsI.enablePan = false;
+    myOptionsI.zoomSpeed = 2.0;
+    myOptionsI.update();
+
+}
+
 var rangeInput = document.getElementById("range_weight");
 rangeInput.setAttribute("min", "1");
 rangeInput.setAttribute("max", json[0].xPos.length);
@@ -170,7 +204,7 @@ function resetEvent() {
     pass = 0;
     rangeInput.value = 1
     if(!running)
-        matchTimestep()
+        matchTimestep();
 }
 
 function matchTimestep()
@@ -179,7 +213,15 @@ function matchTimestep()
         groupLiquid.children[i].position.x = json[vectors[i]].xPos[pass];
         groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
         groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
+
+        if(json[vectors[i]].xPos[pass]>-5.49 && json[vectors[i]].xPos[pass]<-2.49) {
+            groupInterface.children[i].position.x = json[vectors[i]].xPos[pass];
+            groupInterface.children[i].position.y = json[vectors[i]].yPos[pass];
+            groupInterface.children[i].position.z = json[vectors[i]].zPos[pass];
+        }
+
     }
+
     if(groupTrajectory) {
         groupTrajectory.children[0].position.x = json[groupTrajectory.children[0].shanks].xPos[pass];
         groupTrajectory.children[0].position.y = json[groupTrajectory.children[0].shanks].yPos[pass];
@@ -189,23 +231,33 @@ function matchTimestep()
 function createSolidCloud() {
     var gA = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
     var gB = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+    var gC = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
     scene.add( groupSolidA );
     sceneT.add( groupSolidB );
+    sceneI.add( groupSolidC );
     for(var i=0;i<json.length;i++) {
         if (json[i].label[0] == 3) {
             var mA = new THREE.MeshBasicMaterial();
             var mB = new THREE.MeshBasicMaterial();
-            mA.color.setHex(0xFFFFFF)
-            mB.color.setHex(0xFFFFFF)
+            var mC = new THREE.MeshBasicMaterial();
+
+            mA.color.setHex(0xFFFFFF);
+            mB.color.setHex(0xFFFFFF);
+            mC.color.setHex(0xFFFFFF);
+
             var meshA = new THREE.Mesh( gA, mA );
             meshA.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
             var meshB = new THREE.Mesh( gB, mB );
             meshB.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
+            var meshC = new THREE.Mesh( gC, mC );
+            meshC.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
 
             groupSolidA.add(meshA);
             groupSolidB.add(meshB);
+            groupSolidC.add(meshC);
         }
     }
+
 }
 
 
@@ -226,6 +278,28 @@ function createLiquidCloud() {
             groupLiquid.add(liquidMesh);
         }
     }
+}
+
+function createInterfaceCloud() {
+
+    var interfaceGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
+    for(var i=0;i<json.length;i++) {
+        if(json[i].label[0] != 3 && (json[i].xPos[0]>-5.49 && json[i].xPos[0]<-2.49)){
+
+            interfaceVectors.push(i);
+            var interfaceMaterial = new THREE.MeshBasicMaterial();
+            interfaceMaterial.color.setHex(0x00aaff)
+            var interfaceMesh = new THREE.Mesh( interfaceGeometry, interfaceMaterial );
+            interfaceMesh.shanks = i;
+            interfaceMesh.isClicked = false;
+            interfaceMesh.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
+            // mesh.rotation.set( Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI );
+            // mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * radius * 0.1 + radius * 0.05;
+            groupInterface.add(interfaceMesh);
+        }
+    }
+    sceneI.add(groupInterface);
+    //console.log(interfaceVectors.length);
 }
 
 render();
@@ -249,6 +323,7 @@ function render() {
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
         rendererV.render(sceneV, cameraV);
+        rendererI.render(sceneI,cameraI);
         if (pass >= json[0].xPos.length)
             pass = 0;
         // pointCloud.geometry.verticesNeedUpdate = true;
@@ -259,6 +334,7 @@ function render() {
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
         rendererV.render(sceneV, cameraV);
+        rendererI.render(sceneI, cameraI);
     }
 }
 
