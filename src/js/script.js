@@ -21,15 +21,16 @@ var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable
 var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=3, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
 var planePoints=[], vPlanePoints=[], zPlanePoints=[];
 var arrow;
-
+var group1 = new THREE.Group();
+var group2 = new THREE.Group();
 readJSON();
 readHeightData();
 createInitialScene();
 createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
-createRectangle();
-createVelocityProfileScene();
+// createRectangle();
+// createVelocityProfileScene();
 createPlots();
 createPlotl();
 
@@ -84,7 +85,9 @@ function createInitialScene() {
     scene.add(camera);
 
 	renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( width, height );
+    // renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById("scene").appendChild( renderer.domElement );
     var myOptions = new THREE.OrbitControls(camera, renderer.domElement);
     myOptions.enablePan = false;
@@ -140,20 +143,117 @@ function createVelocityProfileScene() {
 
 
 function createSolidCloud() {
-    var g = new THREE.Geometry();
+
+
+    // var simpleGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+    var simpleGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
+
+    scene.add( group1 );
+    // sceneT.add( group2 );
     for(var i=0;i<json.length;i++) {
-        if(json[i].label[0] == 3) {
-            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-            g.colors.push(new THREE.Color("rgb(255,255,255)"))
+        if (json[i].label[0] == 3) {
+
+            var simpleMaterial = new THREE.MeshBasicMaterial();
+            simpleMaterial.color.setHex( 0x333333 );
+            var mesh = new THREE.Mesh( simpleGeometry, simpleMaterial );
+
+            mesh.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
+            // mesh.rotation.set( Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI );
+            // mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * radius * 0.1 + radius * 0.05;
+            group1.add(mesh);
+
+            // var g = new THREE.Geometry();
+            // g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+            // g.colors.push(new THREE.Color())
+            // // var m = new THREE.PointsMaterial( { size:100, sizeAttenuation: false, map: sprite,
+            // //     alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+            // var m = new THREE.PointsMaterial({
+            //     vertexColors: THREE.VertexColors,
+            //     size: 10
+            // });
+            // group1.add(new THREE.Points( g, m ));
+            // group2.add(new THREE.Points( g, m ));
         }
     }
-    var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
-        alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
-    // var solidCloud = new THREE.Points( g, m );
-    // solidCloud.name = 'solidCloud';
-    scene.add(new THREE.Points( g, m ));
-    sceneT.add(new THREE.Points( g, m ));
+    // var group3 = new THREE.Object3D();
+    // group3.scale.set( 1, 2, 1 );
+    // group3.position.set( - 5, 0, 0 );
+    // group3.rotation.set( Math.PI / 2, 0, 0 );
+    // group1.add( group3 );
+    // var ss = new THREE.Sprite( new THREE.SpriteMaterial( { color: '#69f' } ) );
+    // ss.position.set( 0, 2, 5 );
+    // ss.scale.set( 10, 2, 3 );
+    // // ss.center.set( - 0.1, 0 );
+    // ss.material.rotation = Math.PI / 3;
+    // group1.add( ss );
+
+
+    // var g = new THREE.Geometry();
+    // for(var i=0;i<json.length;i++) {
+    //     if(json[i].label[0] == 3) {
+    //         g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+    //         g.colors.push(new THREE.Color())
+    //     }
+    // }
+    // var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
+    //     alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // // var solidCloud = new THREE.Points( g, m );
+    // // solidCloud.name = 'solidCloud';
+    // scene.add(new THREE.Points( g, m ));
+    // sceneT.add(new THREE.Points( g, m ));
 }
+window.addEventListener( "mousemove", onDocumentMouseMove, false );
+var selectedObject = null;
+var mouseVector = new THREE.Vector3();
+function onDocumentMouseMove( event ) {
+    event.preventDefault();
+    if ( selectedObject ) {
+        selectedObject.material.color.set( '#69f' );
+        // selectedObject.geometry.colors[0].set( '#69f' );
+        selectedObject = null;
+    }
+    var intersects = getIntersects( event.layerX, event.layerY );
+    if ( intersects.length > 0 ) {
+        var res = intersects.filter( function ( res ) {
+            return res && res.object;
+        } )[ 0 ];
+        if ( res && res.object ) {
+            selectedObject = res.object;
+            // selectedObject.geometry.colors[0].set( '#f00' );
+            selectedObject.material.color.set( '#f00' );
+        }
+    }
+}
+
+function getIntersects( x, y ) {
+    x = ( x / window.innerWidth ) * 2 - 1;
+    y = - ( y / window.innerHeight ) * 2 + 1;
+    mouseVector.set( x, y, 0.5 );
+    raycaster.setFromCamera( mouseVector, camera );
+    return raycaster.intersectObject( group1, true );
+}
+
+// window.addEventListener( "mousemove", onDocumentMouseMove, false );
+// var intersected;
+// function onDocumentMouseMove( event ) {
+//     event.preventDefault();
+//     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+//     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+//     raycaster.setFromCamera( mouse, camera );
+//     var intersections = raycaster.intersectObjects( scene.children, true );
+//     if ( intersections.length > 0 ) {
+//         if ( intersected != intersections[ 0 ].object ) {
+//             if ( intersected ) intersected.material.color.setHex( "#fff5f0" );
+//             intersected = intersections[ 0 ].object;
+//             intersected.material.color.setHex( "#3182bd" );
+//         }
+//         document.body.style.cursor = 'pointer';
+//     } else if ( intersected ) {
+//         intersected.material.color.setHex( "#ffea16" );
+//         intersected = null;
+//         document.body.style.cursor = 'auto';
+//     }
+// }
 
 
 function createLiquidCloud() {
