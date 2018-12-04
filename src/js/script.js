@@ -38,6 +38,7 @@ createRectangle();
 createVelocityProfileScene();
 createPlots();
 createPlotl();
+createPlotb();
 
 document.addEventListener("keydown", onArrowKeyDown, false);
 document.getElementById("scene").addEventListener( "mousemove", onDocumentMouseMove, false );
@@ -863,5 +864,74 @@ function createPlotl(){
 };
 
 function createPlotb(){
+	var time10, time20, time30, time40, time50, time60, time70, time80, time90;
+	
+	var layout = {
+		title: 'Height Box Plot',
+		yaxis: {
+			title: 'height',
+			zeroline: false
+		},
+		xaxis: {
+			title: 'time instant',
+			zeroline: false
+		},
+	};
 
+	var time10 = {
+	  y: heightArray[9].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '10'
+	};
+
+	var time20 = {
+	  y: heightArray[19].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '20'
+	};
+	
+	var time30 = {
+	  y: heightArray[29].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '30'
+	};
+
+	var time40 = {
+	  y: heightArray[39].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '40'
+	};
+	
+	var time50 = {
+	  y: heightArray[49].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '50'
+	};
+
+	var time60 = {
+	  y: heightArray[59].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '60'
+	};
+	
+	var time70 = {
+	  y: heightArray[69].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '70'
+	};
+
+	var time80 = {
+	  y: heightArray[79].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '80'
+	};
+	
+	var time90 = {
+	  y: heightArray[89].map( function(value) { return value - 125; }),
+	  type: 'box',
+	  name: '90'
+	};
+	
+	var data = [time10, time20, time30, time40, time50, time60, time70, time80, time90];
+	Plotly.newPlot('plotb_scene', data, layout);
 };
