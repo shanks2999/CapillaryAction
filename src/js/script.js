@@ -21,6 +21,7 @@ var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable
 var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=3, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
 var planePoints=[], vPlanePoints=[], zPlanePoints=[];
 var arrow;
+var groupArrow = new THREE.Group();
 var groupSolidA = new THREE.Group();
 var groupSolidB = new THREE.Group();
 var groupLiquid = new THREE.Group();
@@ -33,8 +34,8 @@ createInitialScene();
 createTrajectoryScene();
 createSolidCloud();
 createLiquidCloud();
-// createRectangle();
-// createVelocityProfileScene();
+createRectangle();
+createVelocityProfileScene();
 createPlots();
 createPlotl();
 
@@ -319,6 +320,7 @@ function render() {
         pass++;
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
+        rendererV.render(sceneV, cameraV);
         if (pass >= json[0].xPos.length)
             pass = 0;
         // pointCloud.geometry.verticesNeedUpdate = true;
@@ -328,6 +330,7 @@ function render() {
         requestAnimationFrame(render);
         renderer.render( scene, camera );
         rendererT.render( sceneT, cameraT );
+        rendererV.render(sceneV, cameraV);
     }
 }
 
@@ -544,9 +547,9 @@ function createRectangle() {
 
 
 function velocityPoints(planePoints){
-    sceneT.remove(velocityCloud);
-    sceneT.remove(arrow);
-    console.log("Inside func");
+    sceneV.remove(velocityCloud);
+    sceneV.remove(groupArrow);
+    groupArrow = new THREE.Group();
     //console.log(planePoints.length);
     var g = new THREE.Geometry();
     for(var i=0;i<planePoints.length;i++) {
@@ -557,7 +560,7 @@ function velocityPoints(planePoints){
             var terminus = new THREE.Vector3((planePoints[i].xPos[pass + 1], planePoints[i].yPos[pass + 1], planePoints[i].zPos[pass + 1]));
             var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
             arrow = new THREE.ArrowHelper(direction, origin, 20, 0x884400);
-            sceneT.add(arrow);
+            groupArrow.add(arrow);
         }
     }
     var m = new THREE.PointsMaterial( { size:7, sizeAttenuation: false, map: sprite,
@@ -566,7 +569,11 @@ function velocityPoints(planePoints){
     // solidCloud.name = 'solidCloud';
     velocityCloud = new THREE.Points( g, m );
     velocityCloud.name = 'velocityCloud';
-    sceneT.add(velocityCloud);
+    sceneV.add(velocityCloud);
+    sceneV.add(groupArrow);
+    rendererV.render(sceneV,cameraV);
+
+
 
 };
 
