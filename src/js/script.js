@@ -23,6 +23,7 @@ var planePoints=[], vPlanePoints=[], zPlanePoints=[];
 var arrow;
 var group1 = new THREE.Group();
 var group2 = new THREE.Group();
+var groupLiquid = new THREE.Group();
 readJSON();
 readHeightData();
 createInitialScene();
@@ -86,8 +87,8 @@ function createInitialScene() {
 
 	renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( width, height );
-    // renderer.setSize( window.innerWidth, window.innerHeight );
+    // renderer.setSize( width, height );
+    renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById("scene").appendChild( renderer.domElement );
     var myOptions = new THREE.OrbitControls(camera, renderer.domElement);
     myOptions.enablePan = false;
@@ -145,8 +146,8 @@ function createVelocityProfileScene() {
 function createSolidCloud() {
 
 
-    // var simpleGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
-    var simpleGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
+    var simpleGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+    // var simpleGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
 
     scene.add( group1 );
     // sceneT.add( group2 );
@@ -154,7 +155,7 @@ function createSolidCloud() {
         if (json[i].label[0] == 3) {
 
             var simpleMaterial = new THREE.MeshBasicMaterial();
-            simpleMaterial.color.setHex( 0x333333 );
+            simpleMaterial.color.setHex(0xFFFFFF)
             var mesh = new THREE.Mesh( simpleGeometry, simpleMaterial );
 
             mesh.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
@@ -257,22 +258,42 @@ function getIntersects( x, y ) {
 
 
 function createLiquidCloud() {
-    var g = new THREE.Geometry();
+
+
+    scene.add(groupLiquid)
+    var liquidGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
     for(var i=0;i<json.length;i++) {
         if(json[i].label[0] != 3){
             // vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
             vectors.push(i);
-            g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
-            g.colors.push(new THREE.Color("rgb(49,130,189)"))
+            var liquidMaterial = new THREE.MeshBasicMaterial();
+            liquidMaterial.color.setHex(0x3862AE)
+            var liquidMesh = new THREE.Mesh( liquidGeometry, liquidMaterial );
+
+            liquidMesh.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
+            // mesh.rotation.set( Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI );
+            // mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * radius * 0.1 + radius * 0.05;
+            groupLiquid.add(liquidMesh);
         }
     }
-    // pointCloud = new THREE.Points(g, m);
-    var m = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, map: sprite,
-        alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
-    // m.color.setHSL( 1.0, 0.3, 0.7 );
-    pointCloud = new THREE.Points( g, m );
-    pointCloud.name = 'liquidCloud';
-    scene.add(pointCloud);
+
+
+    // var g = new THREE.Geometry();
+    // for(var i=0;i<json.length;i++) {
+    //     if(json[i].label[0] != 3){
+    //         // vectors.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+    //         vectors.push(i);
+    //         g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
+    //         g.colors.push(new THREE.Color("rgb(49,130,189)"))
+    //     }
+    // }
+    // // pointCloud = new THREE.Points(g, m);
+    // var m = new THREE.PointsMaterial( { size: 3, sizeAttenuation: false, map: sprite,
+    //     alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
+    // // m.color.setHSL( 1.0, 0.3, 0.7 );
+    // pointCloud = new THREE.Points( g, m );
+    // pointCloud.name = 'liquidCloud';
+    // scene.add(pointCloud);
 }
 
 
@@ -288,9 +309,10 @@ function render() {
         }, timeout);
 
         for (var i = 0; i < vectors.length; i++) {
-            pointCloud.geometry.vertices[i].x = json[vectors[i]].xPos[pass];
-            pointCloud.geometry.vertices[i].y = json[vectors[i]].yPos[pass];
-            pointCloud.geometry.vertices[i].z = json[vectors[i]].zPos[pass];
+            // console.log(groupLiquid[0])
+            groupLiquid.children[i].position.x = json[vectors[i]].xPos[pass];
+            groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
+            groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
         }
         if(pointTrajectory) {
             pointTrajectory.geometry.vertices[0].x = json[10000].xPos[pass];
@@ -303,7 +325,7 @@ function render() {
         rendererT.render( sceneT, cameraT );
         if (pass >= json[0].xPos.length)
             pass = 0;
-        pointCloud.geometry.verticesNeedUpdate = true;
+        // pointCloud.geometry.verticesNeedUpdate = true;
 
     }
     else {
