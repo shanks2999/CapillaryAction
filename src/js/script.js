@@ -10,10 +10,10 @@ var sdArray = [];
 var timeout = 1000;
 var width = 650
 var height = width * 0.75;
-var mouse, raycaster;
+var raycaster;
 var scene, camera, light, renderer, pointCloud;
 var sceneV, cameraV, lightV, rendererV,velocityCloud;
-var sceneT, cameraT, lightT, rendererT, pointTrajectory;
+var sceneT, cameraT, lightT, rendererT;
 var sprite = new THREE.TextureLoader().load( 'data/disc.png' );
 var vectors = []
 var cuboid, cubeWidth=1, cubeHeight=120, cubeLength=40, planeBackMovable = true, planeFrontMovable = true, xTranslateValue = 0;
@@ -21,9 +21,11 @@ var verticalCuboid, vCubeWidth=25, vCubeHeight=3, vCubeLength=25, planeUpMovable
 var zCuboid, zCubeWidth=40, zCubeHeight=120, zCubeLength=3, planeOutMovable = true, planeBehindMovable = true, zTranslateValue = 0;
 var planePoints=[], vPlanePoints=[], zPlanePoints=[];
 var arrow;
-var group1 = new THREE.Group();
-var group2 = new THREE.Group();
+var groupSolidA = new THREE.Group();
+var groupSolidB = new THREE.Group();
 var groupLiquid = new THREE.Group();
+var hoveredObject = null, clickedObject = null;
+var mouseVector = new THREE.Vector3();
 readJSON();
 readHeightData();
 createInitialScene();
@@ -69,7 +71,6 @@ function createInitialScene() {
 
     raycaster = new THREE.Raycaster();
     raycaster.params.Points.threshold = 10;
-    mouse = new THREE.Vector2();
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 90, width / height, 0.1, 3000 );
@@ -87,8 +88,8 @@ function createInitialScene() {
 
 	renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
-    // renderer.setSize( width, height );
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( width, height );
+    //renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById("scene").appendChild( renderer.domElement );
     var myOptions = new THREE.OrbitControls(camera, renderer.domElement);
     myOptions.enablePan = false;
@@ -144,24 +145,23 @@ function createVelocityProfileScene() {
 
 
 function createSolidCloud() {
-
-
-    var simpleGeometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
-    // var simpleGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
-
-    scene.add( group1 );
-    // sceneT.add( group2 );
+    var gA = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+    var gB = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+    scene.add( groupSolidA );
+    sceneT.add( groupSolidB );
     for(var i=0;i<json.length;i++) {
         if (json[i].label[0] == 3) {
+            var mA = new THREE.MeshBasicMaterial();
+            var mB = new THREE.MeshBasicMaterial();
+            mA.color.setHex(0xFFFFFF)
+            mB.color.setHex(0xFFFFFF)
+            var meshA = new THREE.Mesh( gA, mA );
+            meshA.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
+            var meshB = new THREE.Mesh( gB, mB );
+            meshB.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
 
-            var simpleMaterial = new THREE.MeshBasicMaterial();
-            simpleMaterial.color.setHex(0xFFFFFF)
-            var mesh = new THREE.Mesh( simpleGeometry, simpleMaterial );
-
-            mesh.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
-            // mesh.rotation.set( Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI );
-            // mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * radius * 0.1 + radius * 0.05;
-            group1.add(mesh);
+            groupSolidA.add(meshA);
+            groupSolidB.add(meshB);
 
             // var g = new THREE.Geometry();
             // g.vertices.push(new THREE.Vector3(json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]));
@@ -172,21 +172,21 @@ function createSolidCloud() {
             //     vertexColors: THREE.VertexColors,
             //     size: 10
             // });
-            // group1.add(new THREE.Points( g, m ));
-            // group2.add(new THREE.Points( g, m ));
+            // groupSolidA.add(new THREE.Points( g, m ));
+            // groupSolidB.add(new THREE.Points( g, m ));
         }
     }
     // var group3 = new THREE.Object3D();
     // group3.scale.set( 1, 2, 1 );
     // group3.position.set( - 5, 0, 0 );
     // group3.rotation.set( Math.PI / 2, 0, 0 );
-    // group1.add( group3 );
+    // groupSolidA.add( group3 );
     // var ss = new THREE.Sprite( new THREE.SpriteMaterial( { color: '#69f' } ) );
     // ss.position.set( 0, 2, 5 );
     // ss.scale.set( 10, 2, 3 );
     // // ss.center.set( - 0.1, 0 );
     // ss.material.rotation = Math.PI / 3;
-    // group1.add( ss );
+    // groupSolidA.add( ss );
 
 
     // var g = new THREE.Geometry();
@@ -203,15 +203,14 @@ function createSolidCloud() {
     // scene.add(new THREE.Points( g, m ));
     // sceneT.add(new THREE.Points( g, m ));
 }
-window.addEventListener( "mousemove", onDocumentMouseMove, false );
-var selectedObject = null;
-var mouseVector = new THREE.Vector3();
+document.getElementById("scene").addEventListener( "mousemove", onDocumentMouseMove, false );
+
 function onDocumentMouseMove( event ) {
     event.preventDefault();
-    if ( selectedObject ) {
-        selectedObject.material.color.set( '#69f' );
-        // selectedObject.geometry.colors[0].set( '#69f' );
-        selectedObject = null;
+    if ( hoveredObject ) {
+        hoveredObject.material.color.set( '#69f' );
+        // hoveredObject.geometry.colors[0].set( '#69f' );
+        hoveredObject = null;
     }
     var intersects = getIntersects( event.layerX, event.layerY );
     if ( intersects.length > 0 ) {
@@ -219,19 +218,20 @@ function onDocumentMouseMove( event ) {
             return res && res.object;
         } )[ 0 ];
         if ( res && res.object ) {
-            selectedObject = res.object;
-            // selectedObject.geometry.colors[0].set( '#f00' );
-            selectedObject.material.color.set( '#f00' );
+            hoveredObject = res.object;
+            // hoveredObject.geometry.colors[0].set( '#f00' );
+            hoveredObject.material.color.set( '#f00' );
+            console.log("Hovered on position ", hoveredObject.position.x, hoveredObject.position.y, hoveredObject.position.z)
         }
     }
 }
 
 function getIntersects( x, y ) {
-    x = ( x / window.innerWidth ) * 2 - 1;
-    y = - ( y / window.innerHeight ) * 2 + 1;
+    x = ( x / width ) * 2 - 1;
+    y = - ( y / height ) * 2 + 1;
     mouseVector.set( x, y, 0.5 );
     raycaster.setFromCamera( mouseVector, camera );
-    return raycaster.intersectObject( group1, true );
+    return raycaster.intersectObject( groupSolidA, true );
 }
 
 // window.addEventListener( "mousemove", onDocumentMouseMove, false );
@@ -269,7 +269,7 @@ function createLiquidCloud() {
             var liquidMaterial = new THREE.MeshBasicMaterial();
             liquidMaterial.color.setHex(0x3862AE)
             var liquidMesh = new THREE.Mesh( liquidGeometry, liquidMaterial );
-
+            liquidMesh.shanks = i;
             liquidMesh.position.set( json[i].xPos[0], json[i].yPos[0], json[i].zPos[0]);
             // mesh.rotation.set( Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI );
             // mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * radius * 0.1 + radius * 0.05;
@@ -337,39 +337,34 @@ function render() {
 
 
 function onMouseDown(e) {
-    mouse.x =  ( e.clientX / renderer.domElement.width  ) * 2 - 1;
-    mouse.y = -( e.clientY / renderer.domElement.height ) * 2 + 1;
-    raycaster.setFromCamera( mouse, camera );
-    var intersects = raycaster.intersectObject(pointCloud);
-    if (intersects.length > 0) {
-        //console.log( 'intersects', intersects );
-        // Points.js::raycast() doesn't seem to sort this correctly atm,
-        // but how many points are found depends on the threshold set
-        // on the raycaster as well
-        // intersects = intersects.sort(function (a, b) {
-        //     return a.distanceToRay - b.distanceToRay;
-        // });
-        var particle = intersects[0];
-        console.log('Particle Clicked ', particle);
+    e.preventDefault();
+    if ( clickedObject )
+        clickedObject = null;
+    var intersects = getIntersects( event.layerX, event.layerY );
+    if ( intersects.length > 0 ) {
+        var res = intersects.filter( function ( res ) {
+            return res && res.object;
+        } )[ 0 ];
+        if ( res && res.object ) {
+            clickedObject = res.object;
+            console.log("Particle Clicked ", clickedObject.position.x, clickedObject.position.y, clickedObject.position.z)
+            if(sceneT.getObjectByName('pointTrajectory')) {
+                var selectedObject = sceneT.getObjectByName('pointTrajectory');
+                sceneT.remove(selectedObject);
+            }
 
-        if(sceneT.getObjectByName('pointTrajectory')) {
-            var selectedObject = sceneT.getObjectByName('pointTrajectory');
-            sceneT.remove(selectedObject);
+            var gT = new THREE.SphereGeometry( 0.1, 32, 32 );
+            var mT = new THREE.MeshBasicMaterial();
+            mT.color.setHex(0x3862AE)
+            var meshT = new THREE.Mesh( gT, mT );
+            meshT.shanks = clickedObject.shanks;
+            meshT.position.set( json[clickedObject.shanks].xPos[0], json[clickedObject.shanks].yPos[0], json[clickedObject.shanks].zPos[0]);
+            sceneT.add(pointTrajectory);
+            createTrajectory(pointTrajectory);
         }
-
-        var gT = new THREE.Geometry();
-        var mT = new THREE.PointsMaterial( { size: 20, sizeAttenuation: false, map: sprite,
-            alphaTest: 0.5, transparent: true, vertexColors: THREE.VertexColors } );
-        gT.vertices.push(new THREE.Vector3(json[vectors[0]].xPos[particle.index], json[vectors[particle.index]].yPos[0], json[vectors[particle.index]].zPos[0]));
-        gT.colors.push(new THREE.Color("rgb(227,74,51)"));
-        pointTrajectory = new THREE.Points(gT, mT);
-        pointTrajectory.name = 'pointTrajectory';
-        sceneT.add(pointTrajectory);
-        createTrajectory(pointTrajectory);
     }
-    else{
+    else
         console.log('NO Particle Clicked');
-    }
 }
 
 
