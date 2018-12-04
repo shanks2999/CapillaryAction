@@ -60,15 +60,17 @@
                     </div>
 
                     <div id="tab3" class="tab">
+						<div class="tabsx">
 						<ul class="tabx-links">
-							<li><a href="#plots_scene">SD Spiral Plot</a></li>
-							<li><a href="#plotl_scene">SD Line Chart</a></li>
-							<li class="activex"><a href="#plotb_scene">Height Box Plot</a></li>
+							<li><a id="a_plots_scene" href="#plots_scene" onclick="createScene1()">SD Spiral Plot</a></li>
+							<li><a id="a_plotl_scene" href="#plotl_scene" onclick="createScene2()">SD Line Chart</a></li>
+							<li><a id="a_plotb_scene" class="activex" href="#plotb_scene" onclick="createScene3()">Height Box Plot</a></li>
 						</ul>
 						<div class="tabx-content">
 							<div id="plots_scene" class="tabx" style="float: left; height:487.5px; width:720px; margin-left:1%"></div>
 							<div id="plotl_scene" class="tabx" style="float: left; height:487.5px; width:720px; margin-left:1%"></div>
 							<div id="plotb_scene" class="tabx activex" style="float: left; height:487.5px; width:720px; margin-left:1%"></div>
+						</div>
 						</div>
 					</div>
 
@@ -82,5 +84,60 @@
     <!-- JS Source -->
     <script src="./src/js/tabs.js"></script>
     <script src="./src/js/script.js"></script>
+	<script>
+		function createScene1(){
+			var element1 = document.getElementById("plotl_scene");
+			element1.classList.remove("activex");
+			
+			var element2 = document.getElementById("plotb_scene");
+			element2.classList.remove("activex");
+			
+			document.getElementById("plots_scene").classList.add("activex");
+			
+			var element5 = document.getElementById("a_plotl_scene");
+			element5.classList.remove("activex");
+			
+			var element6 = document.getElementById("a_plotb_scene");
+			element6.classList.remove("activex");
+			
+			document.getElementById("a_plots_scene").classList.add("activex");
+		}
+		
+		function createScene2(){
+			var element1 = document.getElementById("plots_scene");
+			element1.classList.remove("activex");
+			
+			var element2 = document.getElementById("plotb_scene");
+			element2.classList.remove("activex");
+			
+			document.getElementById("plotl_scene").classList.add("activex");
+			
+			var element5 = document.getElementById("a_plots_scene");
+			element5.classList.remove("activex");
+			
+			var element6 = document.getElementById("a_plotb_scene");
+			element6.classList.remove("activex");
+			
+			document.getElementById("a_plotl_scene").classList.add("activex");
+		}
+		
+		function createScene3(){
+			var element1 = document.getElementById("plotl_scene");
+			element1.classList.remove("activex");
+			
+			var element2 = document.getElementById("plots_scene");
+			element2.classList.remove("activex");
+			
+			document.getElementById("plotb_scene").classList.add("activex");
+			
+			var element5 = document.getElementById("a_plotl_scene");
+			element5.classList.remove("activex");
+			
+			var element6 = document.getElementById("a_plots_scene");
+			element6.classList.remove("activex");
+			
+			document.getElementById("a_plotb_scene").classList.add("activex");
+		}
+	</script>
 </body>
 </html>

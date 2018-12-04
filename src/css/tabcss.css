@@ -3,6 +3,11 @@
     display:inline-block;
 }
 
+.tabsx {
+    width:100%;
+    display:inline-block;
+}
+
 /*----- Tab Links -----*/
 /* Clearfix */
 .tab-links:after {
@@ -21,21 +26,22 @@
     padding:9px 15px;
     display:inline-block;
     border-radius:3px 3px 0px 0px;
-    background:#00aaff;
+    background:#005266;
     font-size:16px;
     font-weight:600;
-    color:#000000;
+    color:#ffffff;
     transition:all linear 0.15s;
 }
 
 .tab-links a:hover {
-    background:#ffb84d;
+    background:#ffffff;
+	color:#000000;
     text-decoration:none;
 }
 
 li.active a, li.active a:hover {
-    background:#ffb84d;
-    color:#000000;
+    background:#ffffff;
+	color:#000000;
 }
 
 /*----- Content of Tabs -----*/
@@ -54,12 +60,6 @@ li.active a, li.active a:hover {
     display:block;
 }
 
-.tabx-links:after {
-    display:block;
-    clear:both;
-    content:'';
-}
-
 .tabx-links li {
     margin:0px 5px;
     float:left;
@@ -70,15 +70,16 @@ li.active a, li.active a:hover {
     padding:9px 15px;
     display:inline-block;
     border-radius:3px 3px 0px 0px;
-    background:#05386b;
+    background:#005266;
     font-size:16px;
     font-weight:600;
-    color:#edf5e1;
+    color:#ffffff;
     transition:all linear 0.15s;
 }
 
 .tabx-links a:hover {
-    background:#379683;
+    background:#ffffff;
+	color:#000000;
     text-decoration:none;
 }
 
@@ -98,7 +99,7 @@ li.active a, li.active a:hover {
 	display:block;
 }
 
-li.activex a, li.activex a:hover {
-    background:#fff;
-    color:#4c4c4c;
+a.activex {
+    background:#ffffff;
+    color:#000000;
 }
