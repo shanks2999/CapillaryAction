@@ -214,12 +214,17 @@ function matchTimestep()
         groupLiquid.children[i].position.y = json[vectors[i]].yPos[pass];
         groupLiquid.children[i].position.z = json[vectors[i]].zPos[pass];
 
-        if(json[vectors[i]].xPos[pass]>-5.49 && json[vectors[i]].xPos[pass]<-2.49) {
-            groupInterface.children[i].position.x = json[vectors[i]].xPos[pass];
-            groupInterface.children[i].position.y = json[vectors[i]].yPos[pass];
-            groupInterface.children[i].position.z = json[vectors[i]].zPos[pass];
-        }
 
+
+    }
+
+    for (var i = 0; i < interfaceVectors.length; i++) {
+
+        if (json[interfaceVectors[i]].xPos[pass] > -5.49 && json[interfaceVectors[i]].xPos[pass] < -2.49) {
+            groupInterface.children[i].position.x = json[interfaceVectors[i]].xPos[pass];
+            groupInterface.children[i].position.y = json[interfaceVectors[i]].yPos[pass];
+            groupInterface.children[i].position.z = json[interfaceVectors[i]].zPos[pass];
+        }
     }
 
     if(groupTrajectory) {
