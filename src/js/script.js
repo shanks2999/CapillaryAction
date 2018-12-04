@@ -575,18 +575,18 @@ function onArrowKeyDown(event) {
 function createRectangle() {
 
     var geometry = new THREE.BoxGeometry(cubeWidth,cubeHeight,cubeLength);
-    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
+    var material = new THREE.MeshBasicMaterial( {color: "#737373", opacity: 0.27, transparent:true} );
     cuboid = new THREE.Mesh( geometry, material );
     cuboid.position.y = -8;
     scene.add( cuboid );
 
     var geometry = new THREE.BoxGeometry(vCubeWidth,vCubeHeight,vCubeLength);
-    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
+    var material = new THREE.MeshBasicMaterial( {color: "#737373", opacity: 0.27, transparent:true} );
     verticalCuboid = new THREE.Mesh( geometry, material );
     scene.add( verticalCuboid );
 
     var geometry = new THREE.BoxGeometry(zCubeWidth,zCubeHeight,zCubeLength);
-    var material = new THREE.MeshBasicMaterial( {color: "#ffcccc", opacity: 0.75, transparent:true} );
+    var material = new THREE.MeshBasicMaterial( {color: "#737373", opacity: 0.27, transparent:true} );
     zCuboid = new THREE.Mesh( geometry, material );
     scene.add( zCuboid );
 
@@ -680,7 +680,7 @@ function createPlots() {
 
     var svg = d3.select("body").select("#plots_scene").append("svg")
       .attr("width", width+70)
-      .attr("height", height+25)
+      .attr("height", height)
 	  .style("background", "white")
 	  .style("border-style", "solid")
 	  .style("border-color", "white")
@@ -834,7 +834,7 @@ function createPlots() {
 function createPlotl(){
 	
 	//Use the margin convention practice 
-	var margin = {top: 100, right: 100, bottom: 100, left: 100}, 
+	var margin = {top: 65, right: 50, bottom: 65, left: 65}, 
 		width1 = width - margin.left - margin.right,  
 		height1 = height - margin.top - margin.bottom; 
 
@@ -874,7 +874,7 @@ function createPlotl(){
 
 	// 1. Add the SVG to the page and employ #2
 	var svg = d3.select("#plotl_scene").append("svg")
-		.attr("width", width1 + margin.left + margin.right)
+		.attr("width", 720)
 		.attr("height", height1 + margin.top + margin.bottom)
 		.style("background", "white")
 		.style("border-style", "solid")

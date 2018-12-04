@@ -3,13 +3,13 @@ body {
 }
 
 #title{
-    color:#99ddff;
+    color:#ffffff;
     text-align: center;
-    margin-bottom: 0.4%;
-    padding-top: 0.5%;
+    margin-bottom: 0.8%;
+    padding-top: 1.15%;
     background-color: #000000;
-    font-size: 220%;
-    padding-bottom: 0.8%;
+    font-size: 195%;
+    padding-bottom: 1.15%;
 }
 
 .split {
