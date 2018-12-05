@@ -27,12 +27,15 @@
     </div>
     <div class="split left">
         <div class="tabs">
-            <ul class="tab-links">
+            <ul class="tab-links" style="width:45%; float:left; height:40px">
                 <li class="active"><a href="" onclick='playEvent()'>Play</a></li>
                 <li><a href="" onclick='pauseEvent()'>Pause</a></li>
                 <li><a href="" onclick='resetEvent()'>Reset</a></li>
             </ul>
-            <div class="sliderclass" style="height:40px;margin-bottom:2%">
+			<div style="width:35%; float:right; height:105px; margin-right:4%; border:1px solid white;">
+				<p style="font-size:11px; margin-left:6%; margin-top:2%;"><u>User Guide</u>:<br>Zoom and rotate using mouse/trackpad.<br>Move XY Plane using keys Z/E.<br>Move YZ Plane using keys A/D.<br>Move XZ Plane using keys W/S.<br>Click to select a liquid molecule.</p>
+			</div>
+            <div class="sliderclass" style="height:50px;margin-bottom:1%;width:80%">
                 <input type="range" name="weight" id="range_weight" value="5" min="1" max="90" style="width:35%;float:left;margin-top:1.5%;margin-right:1.5%; margin-left:6%" oninput="range_weight_disp.value = range_weight.value"/>
                 <output  id="range_weight_disp" style="width:10%;height:30px;font-size:20px;margin-left:1.5%;color:white"><font color="white"></font></output>
             </div>
