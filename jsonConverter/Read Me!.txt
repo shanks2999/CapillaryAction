@@ -1,0 +1,54 @@
+############################################
+Explanation of files within "Original Files" folder
+############################################
+
+--> txt files with run_1_part_*.txt
+   These files are generated at certain frequency of increasing time steps, with time sequence from 1001 to 10001. 
+   Each of them includes 44040 rows and 7 columns of numerical values: 
+        * 44040 is total number of particles in simulation domain;
+        * 7 columns are corresponding to: 
+            x-component of position; 
+            y-component of position; 
+            z-component of position; 
+            label of particle (label of liquid = 1, label of solid = 3); 
+            x-component of velocity; 
+            y-component of velocity; 
+            z-component of velocity; 	
+
+			
+---------------------------------XXX-----------------------------------------
+############################################
+Explanation of files within "Converter App" folder
+############################################
+
+--> This folder contains the file "App.exe". This excutable converts all ".txt" files within its current directory into a "json" file.
+--> Just copy all txt files from the Original Dataset into this folder and run the App.exe to generate the ".json" file again.
+--> In case we have  an updated set of files in the future, just put all txt files within the  "Converted App" folder and run App.exe. It will take some time (~5 mins) to convert all files into a consolidated JSON.
+
+
+
+---------------------------------XXX-----------------------------------------
+############################################
+Explanation of files within "Literatures_and_Figures" folder
+############################################
+
+--> Contains the Prototypes and references diagrams used to create the visualization
+
+
+---------------------------------XXX-----------------------------------------
+############################################
+Explanation of files within Current folder
+############################################
+--> simulation_parameter.txt
+   This is a short description of parameters used in current simulation for us to double check the correctness of simulation parameters. 
+
+--> main.py
+	This is the source code which converts all the ".txt" files in the current directory to ".json".
+	In case you are using Linux or MacOS( or cannot run App.exe for any reason) just run this python file (using "python main.py") after copying all txt files in the directory.
+	
+Note:
+	The converted ".json" file is already placed within the data folder insde the root directory.
+	In case you need to reconvert or update the Json file, place it into the data folder converting again to get the updated Visualization
+
+That's it!
+   
