@@ -12,3 +12,5 @@ This path contains:
 
 
 The final website is deployed at: https://smaith2.people.uic.edu/vds_project
+
+Youtube Link also available at: https://youtu.be/3GZYSolkPx4
